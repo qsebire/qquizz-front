@@ -1,16 +1,9 @@
-'use client';
-
-import { useUser } from '@stackframe/stack';
-import { redirect } from 'next/navigation';
+import GuestGuard from '@/components/users/GuestGuard';
 
 export default function SignInUpLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const user = useUser();
-
-    if (user) redirect('/dashboard');
-
-    return children;
+    return <GuestGuard>{children}</GuestGuard>;
 }
