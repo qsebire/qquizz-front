@@ -22,7 +22,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang='en'>
-            <body className={`${kanit.className} antialiased`}>
+            <body
+                className={`${kanit.className} antialiased bg-violet-300 text-violet-800 px-4 md:px-6 xl:px-10`}
+            >
                 <StackProvider
                     app={stackServerApp}
                     lang='fr-FR'
