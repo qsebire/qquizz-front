@@ -1,13 +1,9 @@
 import type { Metadata } from 'next';
-import { StackProvider, StackTheme } from '@stackframe/stack';
-import { stackServerApp } from '../stack';
-import { Kanit } from 'next/font/google';
+import { Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 
-const kanit = Kanit({
-    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+const source_Sans_3 = Source_Sans_3({
     subsets: ['latin'],
-    display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -21,16 +17,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang='en'>
+        <html
+            lang='en'
+            className='h-full'
+        >
             <body
-                className={`${kanit.className} antialiased bg-violet-300 text-violet-800 px-4 md:px-6 xl:px-10`}
+                className={`${source_Sans_3.className} h-full min-h-screen antialiased bg-violet-300 text-violet-800`}
             >
-                <StackProvider
-                    app={stackServerApp}
-                    lang='fr-FR'
-                >
-                    <StackTheme>{children}</StackTheme>
-                </StackProvider>
+                {children}
             </body>
         </html>
     );

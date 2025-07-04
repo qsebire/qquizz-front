@@ -12,7 +12,13 @@ export default function Header() {
     return (
         <header className='flex justify-between py-2 px-6'>
             <div />
-            <p>Futur logo</p>
+            <p className='font-black text-3xl'>
+                <span className='text-pink-600 -right-3 -bottom-1 relative z-10'>
+                    Q
+                </span>
+                <span className='relative z-20'>QuiZ</span>
+                <span className='text-pink-600 '>Z</span>
+            </p>
             <div>
                 {user && (
                     <UserButton

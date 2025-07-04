@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbopack",
+        "dev": "next dev --turbopack -p 3001",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"
@@ -11,6 +11,8 @@
     "dependencies": {
         "@stackframe/stack": "^2.8.12",
         "clsx": "^2.1.1",
+        "emoji-picker-react": "^4.12.3",
+        "emoji-regex": "^10.4.0",
         "lucide-react": "^0.523.0",
         "next": "15.3.4",
         "react": "^19.0.0",
