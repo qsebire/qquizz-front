@@ -104,5 +104,6 @@ const allowedAnswerModes = [
         ),
     },
 ];
+const questionTypes = ['TEXT', 'IMAGE', 'VIDEO', 'AUDIO', 'EMOJI'];
 
-module.exports = { allowedGameModes, allowedAnswerModes };
+module.exports = { allowedGameModes, allowedAnswerModes, questionTypes };

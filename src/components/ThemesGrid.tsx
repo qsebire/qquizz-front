@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { URL_BACKEND } from '../../data/general';
-import ThemeProps from '../../data/dataTypes';
+import { ThemeProps } from '../../data/dataTypes';
 import Card from './Card';
 import Link from 'next/link';
 import Button from './Button';
@@ -75,7 +75,7 @@ const ThemeCard = ({
 
 const AddTheme = () => {
     return (
-        <Link href='/dashboard/add-theme'>
+        <Link href='/dashboard/nouveau-theme'>
             <Card className='bg-violet-700 text-white hover:bg-violet-900'>
                 <p className='text-3xl aspect-square rounded font-bold border-2 border-white leading-none'>
                     +
