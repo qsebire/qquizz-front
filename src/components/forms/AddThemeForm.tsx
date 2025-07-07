@@ -76,7 +76,6 @@ export default function AddThemeForm() {
     const onEmojiClick = (emojiData: EmojiClickData) => {
         setSmiley(emojiData.emoji);
         setShowSmileyPicker(false);
-        console.log(emojiData.emoji.codePointAt(0)?.toString(16));
     };
 
     return (

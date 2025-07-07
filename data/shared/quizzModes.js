@@ -104,6 +104,24 @@ const allowedAnswerModes = [
         ),
     },
 ];
-const questionTypes = ['TEXT', 'IMAGE', 'VIDEO', 'AUDIO', 'EMOJI'];
+const questionTypes = [
+    { value: 'TEXT', label: 'Texte' },
+    { value: 'IMAGE', label: 'Image' },
+    { value: 'VIDEO', label: 'Vidéo' },
+    { value: 'AUDIO', label: 'Audio' },
+    { value: 'EMOJI', label: 'Émojies' },
+];
 
-module.exports = { allowedGameModes, allowedAnswerModes, questionTypes };
+const difficulties = [
+    { level: 1, name: 'Facile' },
+    { level: 2, name: 'Moyen' },
+    { level: 3, name: 'Difficile' },
+    { level: 4, name: 'Hardcore' },
+];
+
+module.exports = {
+    allowedGameModes,
+    allowedAnswerModes,
+    questionTypes,
+    difficulties,
+};

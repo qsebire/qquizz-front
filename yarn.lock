@@ -144,6 +144,52 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.27.1"
 
+"@cloudinary-util/types@1.5.10":
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/@cloudinary-util/types/-/types-1.5.10.tgz#e1003f47fa1bd4ecc83fce37c997c618138d1c67"
+  integrity sha512-n5lrm7SdAXhgWEbkSJKHZGnaoO9G/g4WYS6HYnq/k4nLj79sYfQZOoKjyR8hF2iyLRdLkT+qlk68RNFFv5tKew==
+
+"@cloudinary-util/url-loader@5.10.4":
+  version "5.10.4"
+  resolved "https://registry.yarnpkg.com/@cloudinary-util/url-loader/-/url-loader-5.10.4.tgz#96fbf8648fc37ad11a34bc4637789898026e903d"
+  integrity sha512-gHkdvOaV+rlcwuIT7Vqd0ts/H5bsH4+bwFten/gIZ8oRjzdTBvgIY3R6F8bbJt0pFIEfpFEQLe4rPkl0NNqEWg==
+  dependencies:
+    "@cloudinary-util/types" "1.5.10"
+    "@cloudinary-util/util" "3.3.2"
+    "@cloudinary/url-gen" "1.15.0"
+    zod "^3.22.4"
+
+"@cloudinary-util/util@3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@cloudinary-util/util/-/util-3.3.2.tgz#a5cd48d82d5f344008674ebad99767e997bea222"
+  integrity sha512-Cc0iFxzfl7fcOXuznpeZFGYC885Of/vDgccRDnhTe/8Rf8YKv2PjLtezyo0VgmdA/CpeZy29NCXAsf6liokbwg==
+
+"@cloudinary-util/util@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@cloudinary-util/util/-/util-4.0.0.tgz#5ba8e15c8efd2455f5d21c61b87ee89255b190dd"
+  integrity sha512-S4xcou/3A7l5o+bcKlw2VHBNgwups7/0lbVDT/cO5YmtrcEYXgj6LGmwnjvpTm/x571VPVN8x5jWdT3rLZiKJQ==
+
+"@cloudinary/transformation-builder-sdk@^1.10.0", "@cloudinary/transformation-builder-sdk@^1.15.1":
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/@cloudinary/transformation-builder-sdk/-/transformation-builder-sdk-1.17.0.tgz#3412464e538c159c6a3d5d563dfbf14fb4eec56e"
+  integrity sha512-zPHNtEpLkil+1obvLK7zHDMWAs9ZwUGI0GUKnMMkEC3pOLtKETswPBdLAjJTMH512lGc18vgdzogWdItPRN3Kg==
+  dependencies:
+    "@cloudinary/url-gen" "^1.7.0"
+
+"@cloudinary/url-gen@1.15.0":
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/@cloudinary/url-gen/-/url-gen-1.15.0.tgz#a55c9b51cb27301e0bdc4d60e44a7e73d13db103"
+  integrity sha512-bjU67eZxLUgoRy/Plli4TQio7q6P31OYqnEgXxeN9TKXrzr6h0DeEdIUhKI9gy3HkEBWXWWJIPh7j7gkOJPnyA==
+  dependencies:
+    "@cloudinary/transformation-builder-sdk" "^1.10.0"
+
+"@cloudinary/url-gen@^1.7.0":
+  version "1.21.0"
+  resolved "https://registry.yarnpkg.com/@cloudinary/url-gen/-/url-gen-1.21.0.tgz#89cd0ecf60ce370f067d14394d062b4def3eef0f"
+  integrity sha512-ctYcCzX3G3vcgnESTU2ET3K1XsBiXcEnBddCGV0QbR3fJhLLrIShjSMEwZoepgh4LAFOHJu9DzvLFr+E8R7c7g==
+  dependencies:
+    "@cloudinary/transformation-builder-sdk" "^1.15.1"
+
 "@emnapi/core@^1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@emnapi/core/-/core-1.4.3.tgz#9ac52d2d5aea958f67e52c40a065f51de59b77d6"
@@ -3686,6 +3732,15 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
+next-cloudinary@^6.16.0:
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/next-cloudinary/-/next-cloudinary-6.16.0.tgz#c892034af01e16f4074a6288f9cc1275525b731c"
+  integrity sha512-gbw/A1aBHJBC2thm4/veI77IkmbAQXuRUj8kNEuxf1zgjGkUWkShho/cXS4VsFhnHuDieqb30gMjZnZdBDrQ/Q==
+  dependencies:
+    "@cloudinary-util/types" "1.5.10"
+    "@cloudinary-util/url-loader" "5.10.4"
+    "@cloudinary-util/util" "4.0.0"
+
 next@15.3.4:
   version "15.3.4"
   resolved "https://registry.yarnpkg.com/next/-/next-15.3.4.tgz#7a4863be14c998f1ec1e6d8d4e9e1a1291c8cbe3"
@@ -4679,6 +4734,11 @@ use-sync-external-store@^1.5.0:
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.5.0.tgz#55122e2a3edd2a6c106174c27485e0fd59bcfca0"
   integrity sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==
 
+uuid@^11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
+  integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
+
 uuid@^9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
@@ -4840,3 +4900,8 @@ yup@^1.4.0:
     tiny-case "^1.0.3"
     toposort "^2.0.2"
     type-fest "^2.19.0"
+
+zod@^3.22.4:
+  version "3.25.75"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.75.tgz#8ff9be2fbbcb381a9236f9f74a8879ca29dcc504"
+  integrity sha512-OhpzAmVzabPOL6C3A3gpAifqr9MqihV/Msx3gor2b2kviCgcb+HM9SEOpMWwwNp9MRunWnhtAKUoo0AHhjyPPg==
