@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react';
 import { cn } from '../../../../lib/cn';
 
-export default function Checkbox({
+export default function RadioButton({
     label,
     className,
     isChecked = false,
@@ -19,12 +19,13 @@ export default function Checkbox({
         >
             <div
                 className={cn(
-                    'ring-1 ring-white aspect-square w-6 flex items-center justify-center rounded shrink-0',
-                    isChecked && 'bg-white',
+                    'ring-1 ring-white aspect-square w-6 rounded-full flex items-center justify-center shrink-0',
                     className
                 )}
             >
-                {isChecked && <Check className='stroke-violet-700' />}
+                {isChecked && (
+                    <div className='ring-1 ring-white aspect-square rounded-full w-8/12 bg-white' />
+                )}
             </div>
             {label && (
                 <p className='font-medium text-xl text-white shrink-0'>

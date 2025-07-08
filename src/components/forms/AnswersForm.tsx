@@ -1,14 +1,11 @@
-'use client';
-
-import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import React from 'react';
 
 import Button from '../Button';
 import Input from './elements/Input';
-import Checkbox from './elements/Checkbox';
 import { CirclePlus, X } from 'lucide-react';
 
 import { AnswerProps } from '../../../data/dataTypes';
+import RadioButton from './elements/RadioButton';
 
 const AnswerForm = React.memo(function AnswerForm({
     placeholder,
@@ -39,7 +36,7 @@ const AnswerForm = React.memo(function AnswerForm({
                 />
             </div>
             <div className='col-span-2 self-center justify-self-center'>
-                <Checkbox
+                <RadioButton
                     className='h-6'
                     isChecked={isCorrect}
                     onClick={() => {

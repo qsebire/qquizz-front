@@ -12,10 +12,21 @@ import UploadImage from './elements/UploadImage';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import AnswersForm from './AnswersForm';
 
-import { formDataQuestionType, ThemeProps } from '../../../data/dataTypes';
-import { difficulties, questionTypes } from '../../../data/shared/quizzModes';
+import {
+    allowedAnswerModeType,
+    formDataQuestionType,
+    ThemeProps,
+} from '../../../data/dataTypes';
+import {
+    allowedAnswerModes,
+    difficulties,
+    questionTypes,
+} from '../../../data/shared/quizzModes';
 import { URL_BACKEND } from '../../../data/general';
 import { cn } from '../../../lib/cn';
+import Checkbox from './elements/Checkbox';
+import { Info } from 'lucide-react';
+import InfoButton from '../InfoButton';
 
 export default function AddQuestionForm() {
     const user = useUser();
@@ -31,6 +42,7 @@ export default function AddQuestionForm() {
         difficulty: 1,
         mediaUrl: '',
         emojis: '',
+        allowedAnswerMode: ['CASH', 'MCQ', 'EITHER_ONE'],
         answers: [
             { id: uuidv4(), text: '', isCorrect: true },
             { id: uuidv4(), text: '', isCorrect: false },
@@ -80,7 +92,7 @@ export default function AddQuestionForm() {
 
     // Manage answers
     const canAddAnswer = formData.answers.length < 4;
-    const canDeletAnswer = formData.answers.length > 2;
+    const canDeletAnswer = formData.answers.length > 1;
 
     const handleAddAnswer = () => {
         if (canAddAnswer) {
@@ -119,7 +131,7 @@ export default function AddQuestionForm() {
     };
 
     // Emojies
-    const handleEmojiesBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleEmojiesBlur = () => {
         setTimeout(() => {
             if (
                 emojiPickerRef.current &&
@@ -129,6 +141,105 @@ export default function AddQuestionForm() {
             }
         }, 100);
     };
+
+    const handleAnswerMode = (name: allowedAnswerModeType) => {
+        const isInclude = formData.allowedAnswerMode.includes(name);
+
+        if (isInclude) {
+            if (formData.allowedAnswerMode.length > 1) {
+                setFormData((prev) => {
+                    const answers = [...prev.answers];
+                    const filteredModes = prev.allowedAnswerMode.filter(
+                        (answerMode) => answerMode !== name
+                    );
+
+                    if (
+                        filteredModes.length === 1 &&
+                        filteredModes.includes('CASH') &&
+                        answers.length > 1
+                    ) {
+                        return {
+                            ...prev,
+                            allowedAnswerMode: filteredModes,
+                            answers: answers.slice(0, 1),
+                        };
+                    }
+
+                    return {
+                        ...prev,
+                        allowedAnswerMode: filteredModes,
+                    };
+                });
+                return;
+            }
+            alert('Au moins un mode de réponse doit être sélectionné');
+        }
+
+        if (name === 'TRUE_FALSE') {
+            setFormData((prev) => {
+                return {
+                    ...prev,
+                    allowedAnswerMode: ['TRUE_FALSE'],
+                    answers: [
+                        { id: uuidv4(), text: 'Vrai', isCorrect: true },
+                        { id: uuidv4(), text: 'Faux', isCorrect: false },
+                    ],
+                };
+            });
+            alert(
+                'Le mode Vrai ou Faux ne peut pas être sélectionnée avec un autre mode.'
+            );
+            return;
+        }
+
+        setFormData((prev) => {
+            const answerModesWithoutTrueFalse = prev.allowedAnswerMode.filter(
+                (answerMode) => answerMode !== 'TRUE_FALSE'
+            );
+
+            const newModes = [...answerModesWithoutTrueFalse, name];
+            const answers = [...prev.answers];
+
+            if (
+                newModes.length === 1 &&
+                newModes.includes('CASH') &&
+                answers.length > 1
+            ) {
+                return {
+                    ...prev,
+                    allowedAnswerMode: [...answerModesWithoutTrueFalse, name],
+                    answers: answers.slice(0, 1),
+                };
+            }
+
+            return {
+                ...prev,
+                allowedAnswerMode: [...answerModesWithoutTrueFalse, name],
+                answers:
+                    answers.length === 1
+                        ? [
+                              ...answers,
+                              { id: uuidv4(), text: '', isCorrect: true },
+                          ]
+                        : answers,
+            };
+        });
+    };
+
+    const answerModes = allowedAnswerModes.map((allowedAnswerMode) => {
+        return (
+            <div className='flex items-start gap-1'>
+                <Checkbox
+                    label={allowedAnswerMode.label}
+                    isChecked={formData.allowedAnswerMode.includes(
+                        allowedAnswerMode.name
+                    )}
+                    onClick={() => handleAnswerMode(allowedAnswerMode.name)}
+                />
+                <InfoButton info={allowedAnswerMode.description} />
+            </div>
+        );
+    });
 
     return (
         <form
@@ -180,23 +291,14 @@ export default function AddQuestionForm() {
                         }
                     />
                 )}
-                <Select
-                    label='Niveau de difficulté'
-                    options={difficulties.map((difficulty) => {
-                        return {
-                            value: difficulty.level,
-                            label: difficulty.name,
-                            id: difficulty.level,
-                        };
-                    })}
-                    value={formData.difficulty}
-                    onChange={(e) =>
-                        setFormData({
-                            ...formData,
-                            difficulty: Number(e.currentTarget.value),
-                        })
-                    }
-                />
+                <div className='space-y-2'>
+                    <p className='font-semibold text-2xl text-white'>
+                        Mode(s) de réponse
+                    </p>
+                    <div className='flex items-center gap-4 flex-wrap'>
+                        {answerModes}
+                    </div>
+                </div>
                 {formData.type === 'IMAGE' && (
                     <UploadImage
                         label='Image'
@@ -282,6 +384,23 @@ export default function AddQuestionForm() {
                         setFormData({
                             ...formData,
                             answerDetail: e.currentTarget.value,
+                        })
+                    }
+                />
+                <Select
+                    label='Niveau de difficulté'
+                    options={difficulties.map((difficulty) => {
+                        return {
+                            value: difficulty.level,
+                            label: difficulty.name,
+                            id: difficulty.level,
+                        };
+                    })}
+                    value={formData.difficulty}
+                    onChange={(e) =>
+                        setFormData({
+                            ...formData,
+                            difficulty: Number(e.currentTarget.value),
                         })
                     }
                 />
