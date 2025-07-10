@@ -4,16 +4,22 @@ import Button from '@/components/Button';
 import { useState } from 'react';
 import { CldUploadWidget } from 'next-cloudinary';
 import { ImageUp } from 'lucide-react';
+import { cloudinaryFrTranslation } from '../../../../data/cloudinaryUploadWidgetTranslate';
+import FieldContainer, { FieldContainerProps } from './FieldContainer';
+
+type UploadImageProps = FieldContainerProps & {
+    imageUpload?: string;
+    onUpload: (imageUrl: string) => void;
+};
 
 export default function UploadImage({
     label,
+    description,
+    errorMessage,
+    isOptional,
     imageUpload = '',
     onUpload,
-}: {
-    label: string;
-    imageUpload?: string;
-    onUpload: (imageUrl: string) => void;
-}) {
+}: UploadImageProps) {
     const [imageUrl, setImageURL] = useState(imageUpload);
 
     const handleUpload = (result: any) => {
@@ -27,19 +33,31 @@ export default function UploadImage({
 
     return (
         <div className='w-full space-y-4'>
-            <div className='space-y-0.5 shrink-0'>
-                <p className='font-semibold text-2xl text-white'>{label}</p>
+            <FieldContainer
+                label={label}
+                description={description}
+                errorMessage={errorMessage}
+                isOptional={isOptional}
+            >
                 <CldUploadWidget
                     uploadPreset='qquizz'
                     onSuccess={handleUpload}
                     options={{
-                        sources: ['local', 'url'],
+                        sources: ['local', 'url', 'image_search'],
+                        googleApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+                        searchBySites: ['all'],
+                        searchByRights: true,
                         multiple: false,
                         maxFileSize: 2 * 1024 * 1024, // 2 MB
                         clientAllowedFormats: ['jpg', 'png', 'webp'],
                         cropping: true,
                         maxImageWidth: 1920,
                         maxImageHeight: 1280,
+                        croppingAspectRatio: 12 / 9,
+                        language: 'fr',
+                        text: {
+                            fr: cloudinaryFrTranslation,
+                        },
                     }}
                 >
                     {({ open }) => (
@@ -52,7 +70,7 @@ export default function UploadImage({
                         />
                     )}
                 </CldUploadWidget>
-            </div>
+            </FieldContainer>
             {imageUrl && (
                 <img
                     src={imageUrl}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUser } from '@stackframe/stack';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,12 +9,12 @@ import Input from './elements/Input';
 import Select from './elements/Select';
 import Textarea from './elements/Textarea';
 import UploadImage from './elements/UploadImage';
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import AnswersForm from './AnswersForm';
 
 import {
     allowedAnswerModeType,
     formDataQuestionType,
+    SubThemeProps,
     ThemeProps,
 } from '../../../data/dataTypes';
 import {
@@ -25,57 +25,74 @@ import {
 import { URL_BACKEND } from '../../../data/general';
 import { cn } from '../../../lib/cn';
 import Checkbox from './elements/Checkbox';
-import { Info } from 'lucide-react';
 import InfoButton from '../InfoButton';
+import InputSuggestion from './elements/InputSuggestions';
+import EmojiField from './elements/EmojiField';
+import {
+    addQuestionValidation,
+    manageAnswersByMode,
+    toggleAnswerMode,
+} from '../../../utils/formValidator/addQuestionForm';
 
 export default function AddQuestionForm() {
     const user = useUser();
 
-    const [error, setError] = useState({ isError: false, message: '' });
+    const [error, setError] = useState<{
+        isError: boolean;
+        messages: string[];
+    }>({ isError: false, messages: [] });
     const [isValidate, setIsValidate] = useState(false);
-    const [showSmileyPicker, setShowSmileyPicker] = useState(false);
     const [themes, setThemes] = useState<ThemeProps[]>();
+    const [subThemes, setSubThemes] = useState<SubThemeProps[]>();
+    const [isNewSubTheme, setIsNewSubTheme] = useState(false);
+    const [modesError, setModesError] = useState(false);
     const [formData, setFormData] = useState<formDataQuestionType>({
         question: '',
         type: 'TEXT',
         themeId: 0,
+        subTheme: { id: undefined, name: '' },
         difficulty: 1,
-        mediaUrl: '',
-        emojis: '',
+        mediaUrl: undefined,
+        emojis: undefined,
         allowedAnswerMode: ['CASH', 'MCQ', 'EITHER_ONE'],
         answers: [
             { id: uuidv4(), text: '', isCorrect: true },
             { id: uuidv4(), text: '', isCorrect: false },
         ],
-        answerDetail: '',
+        answerDetail: undefined,
         userId: user?.id,
     });
-
-    const emojiInputRef = useRef<HTMLInputElement>(null);
-    const emojiPickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchThemes = async () => {
             try {
-                const resp = await fetch(`${URL_BACKEND}/theme/all`);
-                const json = await resp.json();
-                if (!resp.ok) {
+                const respThemes = await fetch(`${URL_BACKEND}/theme/all`);
+                const themes = await respThemes.json();
+                const respSubThemes = await fetch(
+                    `${URL_BACKEND}/subtheme/all`
+                );
+                const subThemes = await respSubThemes.json();
+                if (!respThemes.ok || !respSubThemes.ok) {
                     setError({
                         isError: true,
-                        message: json?.error || 'Erreur serveur.',
+                        messages:
+                            themes?.error ||
+                            subThemes?.error ||
+                            'Erreur serveur.',
                     });
                     setIsValidate(false);
                     return;
                 }
-                setThemes(json);
+                setThemes(themes);
+                setSubThemes(subThemes);
                 setFormData({
                     ...formData,
-                    themeId: json[0].id,
+                    themeId: themes[0].id,
                 });
             } catch (error) {
                 setError({
                     isError: true,
-                    message: 'Erreur lors de la requête.',
+                    messages: ['Erreur lors de la requête.'],
                 });
                 setIsValidate(false);
             }
@@ -84,15 +101,116 @@ export default function AddQuestionForm() {
         fetchThemes();
     }, []);
 
-    const isMediaQuestion = ['VIDEO', 'AUDIO'].includes(formData.type);
-    const mediaLabels = {
-        VIDEO: 'URL de la vidéo',
-        AUDIO: "URL de l'audio",
+    // ---- Submit
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // if (!themes) {
+        //     setError({
+        //         isError: true,
+        //         messages: [
+        //             'Un problème est survenu. Merci de recharger la page.',
+        //         ],
+        //     });
+        //     setIsValidate(false);
+        //     return;
+        // }
+
+        // const validation = addQuestionValidation({ formData, themes });
+        // if (validation.isError) {
+        //     setError(validation);
+        //     setIsValidate(false);
+        //     return;
+        // }
+
+        const subTheme = formData.subTheme;
+        let subThemeId = subTheme?.id;
+        if (subTheme && !subThemeId && subTheme.name.length > 1) {
+            try {
+                const resp = await fetch(`${URL_BACKEND}/subtheme/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: subTheme.name }),
+                });
+                const json = await resp.json();
+
+                if (!resp.ok) {
+                    setError({
+                        isError: true,
+                        messages: [json?.error || 'Erreur serveur.'],
+                    });
+                    setIsValidate(false);
+                    return;
+                }
+
+                console.log('sub-theme added');
+                subThemeId = json.id;
+            } catch (err) {
+                setError({
+                    isError: true,
+                    messages: ['Erreur lors de la requête.'],
+                });
+                setIsValidate(false);
+            }
+        }
+
+        console.log(subThemeId);
+
+        // try {
+        //     const resp = await fetch(`${URL_BACKEND}/theme/`, {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({ name, smiley }),
+        //     });
+        //     const json = await resp.json();
+        //     if (!resp.ok) {
+        //         setError({
+        //             isError: true,
+        //             message: json?.error || 'Erreur serveur.',
+        //         });
+        //         setIsValidate(false);
+        //         return;
+        //     }
+
+        //     setError({ isError: false, message: '' });
+        //     setName('');
+        //     setIsValidate(true);
+        // } catch (err) {
+        //     setError({ isError: true, message: 'Erreur lors de la requête.' });
+        //     setIsValidate(false);
+        // }
+    };
+
+    // ---- Sub-theme
+    const handleSubTheme = (inputValue: string) => {
+        const existingSubTheme = subThemes?.find(
+            (subTheme) => subTheme.name === inputValue
+        );
+
+        setFormData({
+            ...formData,
+            subTheme: { id: existingSubTheme?.id, name: inputValue },
+        });
+
+        if (inputValue.length > 0 && !existingSubTheme?.id) {
+            setIsNewSubTheme(true);
+            return;
+        }
+
+        setIsNewSubTheme(false);
     };
 
     // Manage answers
-    const canAddAnswer = formData.answers.length < 4;
-    const canDeletAnswer = formData.answers.length > 1;
+    let canAddAnswer = formData.answers.length < 4;
+    let canDeletAnswer = formData.answers.length > 2;
+    if (
+        formData.allowedAnswerMode.includes('TRUE_FALSE') ||
+        (formData.allowedAnswerMode.length === 1 &&
+            formData.allowedAnswerMode.includes('CASH'))
+    ) {
+        canAddAnswer = false;
+        canDeletAnswer = false;
+    }
 
     const handleAddAnswer = () => {
         if (canAddAnswer) {
@@ -130,105 +248,37 @@ export default function AddQuestionForm() {
         });
     };
 
-    // Emojies
-    const handleEmojiesBlur = () => {
-        setTimeout(() => {
-            if (
-                emojiPickerRef.current &&
-                !emojiPickerRef.current.contains(document.activeElement)
-            ) {
-                setShowSmileyPicker(false);
-            }
-        }, 100);
-    };
-
+    // Manage modes and repercussions
     const handleAnswerMode = (name: allowedAnswerModeType) => {
-        const isInclude = formData.allowedAnswerMode.includes(name);
-
-        if (isInclude) {
-            if (formData.allowedAnswerMode.length > 1) {
-                setFormData((prev) => {
-                    const answers = [...prev.answers];
-                    const filteredModes = prev.allowedAnswerMode.filter(
-                        (answerMode) => answerMode !== name
-                    );
-
-                    if (
-                        filteredModes.length === 1 &&
-                        filteredModes.includes('CASH') &&
-                        answers.length > 1
-                    ) {
-                        return {
-                            ...prev,
-                            allowedAnswerMode: filteredModes,
-                            answers: answers.slice(0, 1),
-                        };
-                    }
-
-                    return {
-                        ...prev,
-                        allowedAnswerMode: filteredModes,
-                    };
-                });
-                return;
-            }
-            alert('Au moins un mode de réponse doit être sélectionné');
-        }
-
-        if (name === 'TRUE_FALSE') {
-            setFormData((prev) => {
-                return {
-                    ...prev,
-                    allowedAnswerMode: ['TRUE_FALSE'],
-                    answers: [
-                        { id: uuidv4(), text: 'Vrai', isCorrect: true },
-                        { id: uuidv4(), text: 'Faux', isCorrect: false },
-                    ],
-                };
-            });
-            alert(
-                'Le mode Vrai ou Faux ne peut pas être sélectionnée avec un autre mode.'
-            );
-            return;
-        }
-
         setFormData((prev) => {
-            const answerModesWithoutTrueFalse = prev.allowedAnswerMode.filter(
-                (answerMode) => answerMode !== 'TRUE_FALSE'
+            const respModes = toggleAnswerMode(prev.allowedAnswerMode, name);
+            const newAnswers = manageAnswersByMode(
+                prev.answers,
+                respModes.modes
             );
 
-            const newModes = [...answerModesWithoutTrueFalse, name];
-            const answers = [...prev.answers];
-
-            if (
-                newModes.length === 1 &&
-                newModes.includes('CASH') &&
-                answers.length > 1
-            ) {
-                return {
-                    ...prev,
-                    allowedAnswerMode: [...answerModesWithoutTrueFalse, name],
-                    answers: answers.slice(0, 1),
-                };
+            // Error in modes, callback UI
+            if (respModes.error) {
+                setModesError(true);
+                setTimeout(() => {
+                    setModesError(false);
+                }, 500);
             }
 
             return {
                 ...prev,
-                allowedAnswerMode: [...answerModesWithoutTrueFalse, name],
-                answers:
-                    answers.length === 1
-                        ? [
-                              ...answers,
-                              { id: uuidv4(), text: '', isCorrect: true },
-                          ]
-                        : answers,
+                allowedAnswerMode: respModes.modes,
+                answers: newAnswers,
             };
         });
     };
 
     const answerModes = allowedAnswerModes.map((allowedAnswerMode) => {
         return (
-            <div className='flex items-start gap-1'>
+            <div
+                className='flex items-start gap-1'
+                key={allowedAnswerMode.name}
+            >
                 <Checkbox
                     label={allowedAnswerMode.label}
                     isChecked={formData.allowedAnswerMode.includes(
@@ -244,21 +294,9 @@ export default function AddQuestionForm() {
     return (
         <form
             className='space-y-4 flex flex-col items-center gap-4'
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
         >
-            <div className='w-full space-y-4'>
-                <Input
-                    label='Question'
-                    name='question'
-                    value={formData.question}
-                    onChange={(e) =>
-                        setFormData({
-                            ...formData,
-                            question: e.currentTarget.value,
-                        })
-                    }
-                    placeholder='Ex : Histoire'
-                />
+            <div className='w-full space-y-6'>
                 <Select
                     label='Type de question'
                     options={questionTypes}
@@ -291,33 +329,55 @@ export default function AddQuestionForm() {
                         }
                     />
                 )}
-                <div className='space-y-2'>
-                    <p className='font-semibold text-2xl text-white'>
-                        Mode(s) de réponse
-                    </p>
-                    <div className='flex items-center gap-4 flex-wrap'>
-                        {answerModes}
-                    </div>
-                </div>
+                {subThemes && (
+                    <InputSuggestion
+                        label='Sous-thème'
+                        isOptional={true}
+                        name='subTheme'
+                        value={formData.subTheme?.name}
+                        suggestions={subThemes.map((subTheme) => subTheme.name)}
+                        onChange={(e) => handleSubTheme(e.currentTarget.value)}
+                        errorMessage={
+                            isNewSubTheme
+                                ? `Le sous-thème "${formData.subTheme?.name}" n'éxiste pas. Il sera créé lors de la création de la question.`
+                                : undefined
+                        }
+                    />
+                )}
+                <Input
+                    label='Question'
+                    name='question'
+                    value={formData.question}
+                    onChange={(e) =>
+                        setFormData({
+                            ...formData,
+                            question: e.currentTarget.value,
+                        })
+                    }
+                    placeholder='Indiquez votre question ici'
+                />
                 {formData.type === 'IMAGE' && (
                     <UploadImage
                         label='Image'
                         imageUpload={formData.mediaUrl}
                         onUpload={(imageUrl) =>
-                            setFormData({
-                                ...formData,
-                                mediaUrl: imageUrl,
+                            setFormData((prev) => {
+                                return {
+                                    ...prev,
+                                    mediaUrl: imageUrl,
+                                };
                             })
                         }
                     />
                 )}
-                {isMediaQuestion && (
+                {['VIDEO', 'AUDIO'].includes(formData.type) && (
                     <Input
                         label={
-                            mediaLabels[
-                                (formData.type as 'VIDEO' | 'AUDIO') ??
-                                    'URL du média'
-                            ]
+                            formData.type === 'VIDEO'
+                                ? 'URL de la vidéo'
+                                : formData.type === 'AUDIO'
+                                ? "URL de l'audio"
+                                : 'URL du média'
                         }
                         name='mediaUrl'
                         value={formData.mediaUrl}
@@ -330,56 +390,98 @@ export default function AddQuestionForm() {
                     />
                 )}
                 {formData.type === 'EMOJI' && (
-                    <div className='relative'>
-                        <Input
-                            ref={emojiInputRef}
-                            label='Émojies à deviner'
-                            value={formData.emojis}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    emojis: e.currentTarget.value,
-                                })
-                            }
-                            onFocus={() => {
-                                setShowSmileyPicker(true);
-                            }}
-                            onBlur={handleEmojiesBlur}
-                        />
-                        <div
-                            ref={emojiPickerRef}
-                            className={cn(
-                                'absolute right-full mr-4 top-1/2 -translate-y-1/2 shadow-2xl shadow-violet-900/40',
-                                showSmileyPicker ? 'block' : 'hidden'
-                            )}
-                            onBlur={handleEmojiesBlur}
-                        >
-                            <EmojiPicker
-                                onEmojiClick={(emojiData: EmojiClickData) => {
-                                    setFormData((prev) => {
-                                        return {
-                                            ...prev,
-                                            emojis:
-                                                prev.emojis + emojiData.emoji,
-                                        };
-                                    });
-                                }}
-                                skinTonesDisabled={true}
-                            />
-                        </div>
-                    </div>
+                    <EmojiField
+                        value={formData.emojis}
+                        onChange={(e) =>
+                            setFormData({
+                                ...formData,
+                                emojis: e.currentTarget.value,
+                            })
+                        }
+                        onEmojiClick={(emojiData) => {
+                            setFormData((prev) => {
+                                return {
+                                    ...prev,
+                                    emojis: prev.emojis + emojiData.emoji,
+                                };
+                            });
+                        }}
+                    />
                 )}
-                <AnswersForm
-                    answers={formData.answers}
-                    canDeletAnswer
-                    canAddAnswer
-                    onAddAnswer={handleAddAnswer}
-                    onDeleteAnswer={handleDeleteAnswer}
-                    onAnswersChange={handleAnswerChange}
-                />
+                <div className='space-y-6'>
+                    <div className='space-y-1'>
+                        <p className='font-semibold text-2xl text-white'>
+                            Mode(s) de réponse autorisé(s)
+                        </p>
+                        <ul
+                            className={cn(
+                                'text-white text-lg leading-tight space-y-1 list-disc pl-4',
+                                modesError && 'text-pink-500'
+                            )}
+                        >
+                            <li>
+                                Lorsque la question sera posée, l'un des mode
+                                coché sera aléatoirement sélectionné.
+                                L'affichage des réponses sera automatiquement
+                                adapté.
+                            </li>
+                            <li>Au moins un mode doit être sélectionné.</li>
+                            <li>
+                                Le mode <strong>"Vrai ou Faux"</strong> ne peut
+                                être combiné à un autre mode.
+                            </li>
+                        </ul>
+                    </div>
+                    <div className='flex items-center gap-4 flex-wrap'>
+                        {answerModes}
+                    </div>
+                </div>
+                <div className='space-y-4 border-y border-white py-4'>
+                    <div className='space-y-1'>
+                        <p className='text-2xl w-full font-bold text-white'>
+                            Réponses proposées
+                        </p>
+                        {formData.allowedAnswerMode.some((mode) =>
+                            ['MCQ', 'EITHER_ONE'].includes(mode)
+                        ) && (
+                            <ul className='text-white text-lg leading-tight space-y-1 list-disc pl-4'>
+                                {formData.allowedAnswerMode.includes('MCQ') && (
+                                    <li>
+                                        En mode <strong>"QCM"</strong> les
+                                        réponses seront placées de manière
+                                        aléatoire.
+                                    </li>
+                                )}
+                                {formData.allowedAnswerMode.includes(
+                                    'EITHER_ONE'
+                                ) && (
+                                    <li>
+                                        En mode{' '}
+                                        <strong>"L'un ou l'autre"</strong>, une
+                                        réponse sera aléatoirement mise sous
+                                        "l'autre".
+                                    </li>
+                                )}
+                                <li>
+                                    Vous pouvez proposer jusqu'à 4 propositions.
+                                </li>
+                            </ul>
+                        )}
+                    </div>
+                    <AnswersForm
+                        answers={formData.answers}
+                        canDeletAnswer={canDeletAnswer}
+                        canAddAnswer={canAddAnswer}
+                        onAddAnswer={handleAddAnswer}
+                        onDeleteAnswer={handleDeleteAnswer}
+                        onAnswersChange={handleAnswerChange}
+                    />
+                </div>
                 <Textarea
-                    label='Détail de la réponse'
+                    label='Explication de la bonne réponse'
                     value={formData.answerDetail}
+                    isOptional={true}
+                    description='Vous pouvez ajouter un texte pour détailler et exliquer la bonne réponse.'
                     onChange={(e) =>
                         setFormData({
                             ...formData,
@@ -407,20 +509,20 @@ export default function AddQuestionForm() {
             </div>
 
             <Button
-                label='Ajouter le thème'
+                label='Ajouter la question'
                 type='submit'
             />
             {error.isError && (
-                <div className='bg-pink-700 py-2 px-4 rounded-2xl'>
-                    <p className='text-lg font-medium text-white text-center'>
-                        {error.message}
-                    </p>
+                <div className='bg-pink-700 py-2 px-4 rounded-2xl text-lg font-medium text-white text-center space-y-1'>
+                    {error.messages.map((message, index) => {
+                        return <p key={index}>{message}</p>;
+                    })}
                 </div>
             )}
             {isValidate && (
                 <div className='bg-teal-400 py-2 px-4 rounded-2xl'>
                     <p className='text-lg font-medium text-teal-950 text-center'>
-                        Le thème a bien été ajouté !
+                        La question a bien été ajoutée !
                     </p>
                 </div>
             )}

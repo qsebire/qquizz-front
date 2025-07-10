@@ -81,8 +81,8 @@ const allowedAnswerModes = [
 const questionTypes = [
     { value: 'TEXT', label: 'Texte' },
     { value: 'IMAGE', label: 'Image' },
-    { value: 'VIDEO', label: 'Vidéo' },
-    { value: 'AUDIO', label: 'Audio' },
+    // { value: 'VIDEO', label: 'Vidéo' },
+    // { value: 'AUDIO', label: 'Audio' },
     { value: 'EMOJI', label: 'Émojies' },
 ];
 

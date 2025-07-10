@@ -86,10 +86,7 @@ export default function AnswersForm({
     });
 
     return (
-        <div className='space-y-6 border-y border-white py-4'>
-            <p className='text-2xl w-full font-bold text-white'>
-                Réponses proposées
-            </p>
+        <div className='space-y-6'>
             <div className='w-full grid grid-cols-12 items-end gap-4'>
                 <p className='col-span-10 text-lg text-white font-semibold'>
                     Intitulés des réponses

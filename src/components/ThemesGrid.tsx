@@ -119,17 +119,15 @@ export default function ThemesGrid({
                   : maxDisplay
           );
 
-    const themesDisplay = visibleThemes
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((theme) => {
-            return (
-                <ThemeCard
-                    {...theme}
-                    key={theme.id}
-                    onChange={() => setToggleThemeEdited((prev) => !prev)}
-                />
-            );
-        });
+    const themesDisplay = visibleThemes.map((theme) => {
+        return (
+            <ThemeCard
+                {...theme}
+                key={theme.id}
+                onChange={() => setToggleThemeEdited((prev) => !prev)}
+            />
+        );
+    });
 
     return (
         <div className='flex flex-col gap-4 items-end'>
