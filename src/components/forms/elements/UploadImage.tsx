@@ -45,7 +45,6 @@ export default function UploadImage({
                     options={{
                         sources: ['local', 'url', 'image_search'],
                         googleApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
-                        searchBySites: ['all'],
                         searchByRights: true,
                         multiple: false,
                         maxFileSize: 2 * 1024 * 1024, // 2 MB

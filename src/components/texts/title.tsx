@@ -9,7 +9,7 @@ export default function Title({
     return (
         <h1
             className={cn(
-                'text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center text-white text-shadow-violet-900/40 text-shadow-lg',
+                'text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-center text-white text-shadow-violet-900/40 text-shadow-lg',
                 className
             )}
         >

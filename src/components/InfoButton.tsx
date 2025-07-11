@@ -14,11 +14,9 @@ export default function InfoButton({
         <div
             className='relative w-fit'
             onMouseEnter={() => {
-                console.log('blur');
                 setShowInfo(true);
             }}
             onMouseLeave={() => {
-                console.log('blur');
                 setShowInfo(false);
             }}
         >

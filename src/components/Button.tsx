@@ -23,7 +23,7 @@ const buttonVariants = cva(
             },
             isClickable: {
                 true: 'pointer-events-auto shadow-lg shadow-violet-900/40',
-                false: 'pointer-events-none',
+                false: 'pointer-events-none opacity-60',
             },
         },
         defaultVariants: {

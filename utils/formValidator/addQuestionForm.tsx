@@ -97,7 +97,7 @@ export const addQuestionValidation = ({
         difficulty,
         mediaUrl,
         emojis,
-        allowedAnswerMode,
+        allowedAnswerModes,
         answers,
     } = formData;
 
@@ -118,7 +118,7 @@ export const addQuestionValidation = ({
         resp.messages.push('Vous devez renseigner un type de question.');
     }
 
-    if (!questionTypes.some((allowedType) => allowedType.label === type)) {
+    if (!questionTypes.some((allowedType) => allowedType.value === type)) {
         resp.isError = true;
         resp.messages.push("Le type de question sélectionné n'est pas valide.");
     }
@@ -158,7 +158,7 @@ export const addQuestionValidation = ({
             const urlImageRegex = new RegExp(
                 '^https://res.cloudinary.com/dbrgpxdez/image/upload/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+.(?:jpg|png|webp)$'
             );
-            if (urlImageRegex.test(mediaUrl)) {
+            if (!urlImageRegex.test(mediaUrl)) {
                 resp.isError = true;
                 resp.messages.push(
                     "L'URL de l'image est invalide. Merci de l'importer à nouveau."
@@ -184,7 +184,7 @@ export const addQuestionValidation = ({
     }
 
     // ----- allowedAnswerMode
-    if (allowedAnswerMode.length === 0) {
+    if (allowedAnswerModes.length === 0) {
         resp.isError = true;
         resp.messages.push(
             'Vous devez sélectionner au moins 1 mode de réponse.'
@@ -192,8 +192,8 @@ export const addQuestionValidation = ({
     }
 
     if (
-        allowedAnswerMode.includes('TRUE_FALSE') &&
-        allowedAnswerMode.length > 1
+        allowedAnswerModes.includes('TRUE_FALSE') &&
+        allowedAnswerModes.length > 1
     ) {
         resp.isError = true;
         resp.messages.push(
@@ -203,7 +203,10 @@ export const addQuestionValidation = ({
 
     // ----- answers
     let allowedNbAnswers = { min: 2, max: 4 };
-    if (allowedAnswerMode.length === 1 && allowedAnswerMode.includes('CASH')) {
+    if (
+        allowedAnswerModes.length === 1 &&
+        allowedAnswerModes.includes('CASH')
+    ) {
         allowedNbAnswers = { min: 1, max: 1 };
     }
     if (

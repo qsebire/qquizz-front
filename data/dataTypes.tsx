@@ -20,8 +20,21 @@ export type formDataQuestionType = {
     difficulty: (typeof difficulties)[number]['level'];
     mediaUrl?: string;
     emojis?: string;
-    allowedAnswerMode: allowedAnswerModeType[];
+    allowedAnswerModes: allowedAnswerModeType[];
     answers: AnswerProps[];
     answerDetail?: string;
     userId?: string;
+};
+
+export type questionType = {
+    question: string;
+    type: (typeof questionTypes)[number]['value'];
+    theme: { id: number; name: string; smiley: string };
+    subtheme?: { id?: number; name: string };
+    difficulty: (typeof difficulties)[number]['level'];
+    mediaUrl?: string;
+    emojis?: string;
+    allowedAnswerModes: allowedAnswerModeType[];
+    answers: AnswerProps[];
+    answerDetail?: string;
 };

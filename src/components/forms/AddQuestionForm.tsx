@@ -33,20 +33,12 @@ import {
     manageAnswersByMode,
     toggleAnswerMode,
 } from '../../../utils/formValidator/addQuestionForm';
+import Loader from '../Loader';
 
 export default function AddQuestionForm() {
     const user = useUser();
 
-    const [error, setError] = useState<{
-        isError: boolean;
-        messages: string[];
-    }>({ isError: false, messages: [] });
-    const [isValidate, setIsValidate] = useState(false);
-    const [themes, setThemes] = useState<ThemeProps[]>();
-    const [subThemes, setSubThemes] = useState<SubThemeProps[]>();
-    const [isNewSubTheme, setIsNewSubTheme] = useState(false);
-    const [modesError, setModesError] = useState(false);
-    const [formData, setFormData] = useState<formDataQuestionType>({
+    const defaultQuestionData: formDataQuestionType = {
         question: '',
         type: 'TEXT',
         themeId: 0,
@@ -54,14 +46,27 @@ export default function AddQuestionForm() {
         difficulty: 1,
         mediaUrl: undefined,
         emojis: undefined,
-        allowedAnswerMode: ['CASH', 'MCQ', 'EITHER_ONE'],
+        allowedAnswerModes: ['CASH', 'MCQ', 'EITHER_ONE'],
         answers: [
             { id: uuidv4(), text: '', isCorrect: true },
             { id: uuidv4(), text: '', isCorrect: false },
         ],
-        answerDetail: undefined,
+        answerDetail: '',
         userId: user?.id,
-    });
+    };
+
+    const [error, setError] = useState<{
+        isError: boolean;
+        messages: string[];
+    }>({ isError: false, messages: [] });
+    const [isValidate, setIsValidate] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [themes, setThemes] = useState<ThemeProps[]>();
+    const [subThemes, setSubThemes] = useState<SubThemeProps[]>();
+    const [isNewSubTheme, setIsNewSubTheme] = useState(false);
+    const [modesError, setModesError] = useState(false);
+    const [formData, setFormData] =
+        useState<formDataQuestionType>(defaultQuestionData);
 
     useEffect(() => {
         const fetchThemes = async () => {
@@ -105,23 +110,26 @@ export default function AddQuestionForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // if (!themes) {
-        //     setError({
-        //         isError: true,
-        //         messages: [
-        //             'Un problème est survenu. Merci de recharger la page.',
-        //         ],
-        //     });
-        //     setIsValidate(false);
-        //     return;
-        // }
+        setLoading(true);
+        if (!themes) {
+            setError({
+                isError: true,
+                messages: [
+                    'Un problème est survenu. Merci de recharger la page.',
+                ],
+            });
+            setIsValidate(false);
+            setLoading(false);
+            return;
+        }
 
-        // const validation = addQuestionValidation({ formData, themes });
-        // if (validation.isError) {
-        //     setError(validation);
-        //     setIsValidate(false);
-        //     return;
-        // }
+        const validation = addQuestionValidation({ formData, themes });
+        if (validation.isError) {
+            setError(validation);
+            setIsValidate(false);
+            setLoading(false);
+            return;
+        }
 
         const subTheme = formData.subTheme;
         let subThemeId = subTheme?.id;
@@ -140,10 +148,10 @@ export default function AddQuestionForm() {
                         messages: [json?.error || 'Erreur serveur.'],
                     });
                     setIsValidate(false);
+                    setLoading(false);
                     return;
                 }
 
-                console.log('sub-theme added');
                 subThemeId = json.id;
             } catch (err) {
                 setError({
@@ -151,34 +159,41 @@ export default function AddQuestionForm() {
                     messages: ['Erreur lors de la requête.'],
                 });
                 setIsValidate(false);
+                setLoading(false);
+                return;
             }
         }
 
-        console.log(subThemeId);
+        try {
+            const { subTheme, ...postData } = formData;
+            const resp = await fetch(`${URL_BACKEND}/question/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subThemeId, ...postData }),
+            });
+            const json = await resp.json();
+            if (!resp.ok) {
+                setError({
+                    isError: true,
+                    messages: [json?.error || 'Erreur serveur.'],
+                });
+                setIsValidate(false);
+                setLoading(false);
+                return;
+            }
 
-        // try {
-        //     const resp = await fetch(`${URL_BACKEND}/theme/`, {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({ name, smiley }),
-        //     });
-        //     const json = await resp.json();
-        //     if (!resp.ok) {
-        //         setError({
-        //             isError: true,
-        //             message: json?.error || 'Erreur serveur.',
-        //         });
-        //         setIsValidate(false);
-        //         return;
-        //     }
-
-        //     setError({ isError: false, message: '' });
-        //     setName('');
-        //     setIsValidate(true);
-        // } catch (err) {
-        //     setError({ isError: true, message: 'Erreur lors de la requête.' });
-        //     setIsValidate(false);
-        // }
+            setFormData(defaultQuestionData);
+            setError({ isError: false, messages: [] });
+            setIsValidate(true);
+            setLoading(false);
+        } catch (err) {
+            setError({
+                isError: true,
+                messages: ['Erreur lors de la requête.'],
+            });
+            setIsValidate(false);
+            setLoading(false);
+        }
     };
 
     // ---- Sub-theme
@@ -204,9 +219,9 @@ export default function AddQuestionForm() {
     let canAddAnswer = formData.answers.length < 4;
     let canDeletAnswer = formData.answers.length > 2;
     if (
-        formData.allowedAnswerMode.includes('TRUE_FALSE') ||
-        (formData.allowedAnswerMode.length === 1 &&
-            formData.allowedAnswerMode.includes('CASH'))
+        formData.allowedAnswerModes.includes('TRUE_FALSE') ||
+        (formData.allowedAnswerModes.length === 1 &&
+            formData.allowedAnswerModes.includes('CASH'))
     ) {
         canAddAnswer = false;
         canDeletAnswer = false;
@@ -251,7 +266,7 @@ export default function AddQuestionForm() {
     // Manage modes and repercussions
     const handleAnswerMode = (name: allowedAnswerModeType) => {
         setFormData((prev) => {
-            const respModes = toggleAnswerMode(prev.allowedAnswerMode, name);
+            const respModes = toggleAnswerMode(prev.allowedAnswerModes, name);
             const newAnswers = manageAnswersByMode(
                 prev.answers,
                 respModes.modes
@@ -281,7 +296,7 @@ export default function AddQuestionForm() {
             >
                 <Checkbox
                     label={allowedAnswerMode.label}
-                    isChecked={formData.allowedAnswerMode.includes(
+                    isChecked={formData.allowedAnswerModes.includes(
                         allowedAnswerMode.name
                     )}
                     onClick={() => handleAnswerMode(allowedAnswerMode.name)}
@@ -296,7 +311,12 @@ export default function AddQuestionForm() {
             className='space-y-4 flex flex-col items-center gap-4'
             onSubmit={handleSubmit}
         >
-            <div className='w-full space-y-6'>
+            <div
+                className={cn(
+                    'w-full space-y-6',
+                    loading ? 'opacity-60 pointer-events-none' : ''
+                )}
+            >
                 <Select
                     label='Type de question'
                     options={questionTypes}
@@ -305,8 +325,8 @@ export default function AddQuestionForm() {
                         setFormData({
                             ...formData,
                             type: e.currentTarget.value,
-                            mediaUrl: '',
-                            emojis: '',
+                            mediaUrl: undefined,
+                            emojis: undefined,
                         })
                     }
                 />
@@ -441,18 +461,20 @@ export default function AddQuestionForm() {
                         <p className='text-2xl w-full font-bold text-white'>
                             Réponses proposées
                         </p>
-                        {formData.allowedAnswerMode.some((mode) =>
+                        {formData.allowedAnswerModes.some((mode) =>
                             ['MCQ', 'EITHER_ONE'].includes(mode)
                         ) && (
                             <ul className='text-white text-lg leading-tight space-y-1 list-disc pl-4'>
-                                {formData.allowedAnswerMode.includes('MCQ') && (
+                                {formData.allowedAnswerModes.includes(
+                                    'MCQ'
+                                ) && (
                                     <li>
                                         En mode <strong>"QCM"</strong> les
                                         réponses seront placées de manière
                                         aléatoire.
                                     </li>
                                 )}
-                                {formData.allowedAnswerMode.includes(
+                                {formData.allowedAnswerModes.includes(
                                     'EITHER_ONE'
                                 ) && (
                                     <li>
@@ -508,10 +530,14 @@ export default function AddQuestionForm() {
                 />
             </div>
 
-            <Button
-                label='Ajouter la question'
-                type='submit'
-            />
+            <div className='flex justify-center items-center gap-2'>
+                <Button
+                    label='Ajouter la question'
+                    type='submit'
+                    isClickable={!loading}
+                />
+                {loading && <Loader />}
+            </div>
             {error.isError && (
                 <div className='bg-pink-700 py-2 px-4 rounded-2xl text-lg font-medium text-white text-center space-y-1'>
                     {error.messages.map((message, index) => {
