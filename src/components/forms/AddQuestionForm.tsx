@@ -74,7 +74,7 @@ export default function AddQuestionForm() {
                 const respThemes = await fetch(`${URL_BACKEND}/theme/all`);
                 const themes = await respThemes.json();
                 const respSubThemes = await fetch(
-                    `${URL_BACKEND}/subtheme/all`
+                    `${URL_BACKEND}/sub-theme/all`
                 );
                 const subThemes = await respSubThemes.json();
                 if (!respThemes.ok || !respSubThemes.ok) {
@@ -135,7 +135,7 @@ export default function AddQuestionForm() {
         let subThemeId = subTheme?.id;
         if (subTheme && !subThemeId && subTheme.name.length > 1) {
             try {
-                const resp = await fetch(`${URL_BACKEND}/subtheme/`, {
+                const resp = await fetch(`${URL_BACKEND}/sub-theme/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: subTheme.name }),
@@ -182,7 +182,7 @@ export default function AddQuestionForm() {
                 return;
             }
 
-            setFormData(defaultQuestionData);
+            // setFormData(defaultQuestionData);
             setError({ isError: false, messages: [] });
             setIsValidate(true);
             setLoading(false);

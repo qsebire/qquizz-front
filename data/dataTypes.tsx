@@ -30,7 +30,7 @@ export type questionType = {
     question: string;
     type: (typeof questionTypes)[number]['value'];
     theme: { id: number; name: string; smiley: string };
-    subtheme?: { id?: number; name: string };
+    subTheme?: { id?: number; name: string };
     difficulty: (typeof difficulties)[number]['level'];
     mediaUrl?: string;
     emojis?: string;

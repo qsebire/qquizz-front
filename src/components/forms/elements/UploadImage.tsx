@@ -10,6 +10,7 @@ import FieldContainer, { FieldContainerProps } from './FieldContainer';
 type UploadImageProps = FieldContainerProps & {
     imageUpload?: string;
     onUpload: (imageUrl: string) => void;
+    multiple?: boolean;
 };
 
 export default function UploadImage({
@@ -19,6 +20,7 @@ export default function UploadImage({
     isOptional,
     imageUpload = '',
     onUpload,
+    multiple = false,
 }: UploadImageProps) {
     const [imageUrl, setImageURL] = useState(imageUpload);
 
@@ -46,7 +48,7 @@ export default function UploadImage({
                         sources: ['local', 'url', 'image_search'],
                         googleApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
                         searchByRights: true,
-                        multiple: false,
+                        multiple: multiple,
                         maxFileSize: 2 * 1024 * 1024, // 2 MB
                         clientAllowedFormats: ['jpg', 'png', 'webp'],
                         cropping: true,

@@ -12,6 +12,7 @@ import Title from '@/components/texts/Title';
 import MainContainer from '@/components/MainContainer';
 import Image from 'next/image';
 import { getRandomElementInArr, shuffleArray } from '../../../../utils/hooks';
+import Timer from '../elements/Timer';
 
 export default function RandomQuestion() {
     const [randomQuestion, setRandomQuestion] = useState<questionType>();
@@ -48,7 +49,7 @@ export default function RandomQuestion() {
         answerDetail,
         emojis,
         mediaUrl,
-        subtheme,
+        subTheme,
     } = randomQuestion;
 
     const randomAnswerMode: allowedAnswerModeType =
@@ -57,14 +58,15 @@ export default function RandomQuestion() {
     const shuffleAnswers = shuffleArray(answers);
 
     return (
-        <MainContainer className='flex flex-col gap-4 items-center justify-center pt-8 pb-12'>
+        <MainContainer className='flex flex-col gap-10 items-center justify-center py-6 relative overflow-visible'>
+            <Timer duration={30} />
             {type === 'IMAGE' && mediaUrl && (
-                <div className='relative h-full w-full'>
+                <div className='relative size-full max-w-3/5 max-h-3/5'>
                     <Image
                         src={mediaUrl}
                         alt='Question Image'
                         fill
-                        className='h-full object-contain'
+                        className='object-contain drop-shadow-2xl drop-shadow-violet-950/40'
                     />
                 </div>
             )}
@@ -76,7 +78,7 @@ export default function RandomQuestion() {
                             {shuffleAnswers.map((answer) => {
                                 return (
                                     <div
-                                        className='w-full min-h-20 p-3 flex items-center justify-center bg-white border-4 border-violet-900 rounded-2xl text-2xl text-violet-900 text-center font-semibold leading-tight'
+                                        className='w-full min-h-20 p-3 flex items-center justify-center bg-violet-950 border-4 border-violet-800 rounded-2xl text-2xl text-white text-center font-semibold leading-tight shadow-xl shadow-violet-950/40'
                                         key={answer.id}
                                     >
                                         {answer.text}
