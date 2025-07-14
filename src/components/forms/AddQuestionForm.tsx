@@ -12,12 +12,6 @@ import UploadImage from './elements/UploadImage';
 import AnswersForm from './AnswersForm';
 
 import {
-    allowedAnswerModeType,
-    formDataQuestionType,
-    SubThemeProps,
-    ThemeProps,
-} from '../../../data/dataTypes';
-import {
     allowedAnswerModes,
     difficulties,
     questionTypes,
@@ -34,14 +28,20 @@ import {
     toggleAnswerMode,
 } from '../../../utils/formValidator/addQuestionForm';
 import Loader from '../Loader';
+import {
+    AllowedAnswerMode,
+    Question,
+    SubTheme,
+    Theme,
+} from '../../../types/question';
 
 export default function AddQuestionForm() {
     const user = useUser();
 
-    const defaultQuestionData: formDataQuestionType = {
+    const defaultQuestionData: Question = {
         question: '',
         type: 'TEXT',
-        themeId: 0,
+        theme: { id: 0, name: '', smiley: '' },
         subTheme: { id: undefined, name: '' },
         difficulty: 1,
         mediaUrl: undefined,
@@ -61,12 +61,11 @@ export default function AddQuestionForm() {
     }>({ isError: false, messages: [] });
     const [isValidate, setIsValidate] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [themes, setThemes] = useState<ThemeProps[]>();
-    const [subThemes, setSubThemes] = useState<SubThemeProps[]>();
+    const [themes, setThemes] = useState<Theme[]>();
+    const [subThemes, setSubThemes] = useState<SubTheme[]>();
     const [isNewSubTheme, setIsNewSubTheme] = useState(false);
     const [modesError, setModesError] = useState(false);
-    const [formData, setFormData] =
-        useState<formDataQuestionType>(defaultQuestionData);
+    const [formData, setFormData] = useState<Question>(defaultQuestionData);
 
     useEffect(() => {
         const fetchThemes = async () => {
@@ -92,7 +91,7 @@ export default function AddQuestionForm() {
                 setSubThemes(subThemes);
                 setFormData({
                     ...formData,
-                    themeId: themes[0].id,
+                    theme: themes[0],
                 });
             } catch (error) {
                 setError({
@@ -165,11 +164,15 @@ export default function AddQuestionForm() {
         }
 
         try {
-            const { subTheme, ...postData } = formData;
+            const { theme, subTheme, ...postData } = formData;
             const resp = await fetch(`${URL_BACKEND}/question/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subThemeId, ...postData }),
+                body: JSON.stringify({
+                    themeId: theme.id,
+                    subThemeId,
+                    ...postData,
+                }),
             });
             const json = await resp.json();
             if (!resp.ok) {
@@ -194,6 +197,23 @@ export default function AddQuestionForm() {
             setIsValidate(false);
             setLoading(false);
         }
+    };
+
+    // ---- Theme
+    const handleTheme = (inputValue: string) => {
+        const selectedTheme = themes?.find(
+            (theme) => theme.id === Number(inputValue)
+        );
+
+        if (!selectedTheme) {
+            alert('Une erreur est survenue, merci de recharger la page.');
+            return;
+        }
+
+        setFormData({
+            ...formData,
+            theme: selectedTheme,
+        });
     };
 
     // ---- Sub-theme
@@ -264,7 +284,7 @@ export default function AddQuestionForm() {
     };
 
     // Manage modes and repercussions
-    const handleAnswerMode = (name: allowedAnswerModeType) => {
+    const handleAnswerMode = (name: AllowedAnswerMode) => {
         setFormData((prev) => {
             const respModes = toggleAnswerMode(prev.allowedAnswerModes, name);
             const newAnswers = manageAnswersByMode(
@@ -340,13 +360,8 @@ export default function AddQuestionForm() {
                                 id: theme.id,
                             };
                         })}
-                        value={formData.themeId}
-                        onChange={(e) =>
-                            setFormData({
-                                ...formData,
-                                themeId: Number(e.currentTarget.value),
-                            })
-                        }
+                        value={formData.theme.id}
+                        onChange={(e) => handleTheme(e.currentTarget.value)}
                     />
                 )}
                 {subThemes && (

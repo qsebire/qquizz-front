@@ -4,8 +4,8 @@ import Button from '../Button';
 import Input from './elements/Input';
 import { CirclePlus, X } from 'lucide-react';
 
-import { AnswerProps } from '../../../data/dataTypes';
 import RadioButton from './elements/RadioButton';
+import { Answer } from '../../../types/question';
 
 const AnswerForm = React.memo(function AnswerForm({
     placeholder,
@@ -14,7 +14,7 @@ const AnswerForm = React.memo(function AnswerForm({
     onChange,
     onDelete,
     canBeDeleted = false,
-}: Omit<AnswerProps, 'id'> & {
+}: Omit<Answer, 'id'> & {
     placeholder: string;
     onDelete: () => void;
     canBeDeleted?: boolean;
@@ -62,7 +62,7 @@ export default function AnswersForm({
     canDeletAnswer,
     canAddAnswer,
 }: {
-    answers: AnswerProps[];
+    answers: Answer[];
     onAnswersChange: (text: string, isCorrect: boolean, id: string) => void;
     onAddAnswer: () => void;
     onDeleteAnswer: (id: string) => void;

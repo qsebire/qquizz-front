@@ -3,19 +3,16 @@
 import { useEffect, useState } from 'react';
 
 import { URL_BACKEND } from '../../../../data/general';
-import Button from '@/components/Button';
-import {
-    allowedAnswerModeType,
-    questionType,
-} from '../../../../data/dataTypes';
+
 import Title from '@/components/texts/Title';
 import MainContainer from '@/components/MainContainer';
 import Image from 'next/image';
 import { getRandomElementInArr, shuffleArray } from '../../../../utils/hooks';
 import Timer from '../elements/Timer';
+import { AllowedAnswerMode, Question } from '../../../../types/question';
 
 export default function RandomQuestion() {
-    const [randomQuestion, setRandomQuestion] = useState<questionType>();
+    const [randomQuestion, setRandomQuestion] = useState<Question>();
 
     useEffect(() => {
         const fetchRandomQuestion = async () => {
@@ -52,7 +49,7 @@ export default function RandomQuestion() {
         subTheme,
     } = randomQuestion;
 
-    const randomAnswerMode: allowedAnswerModeType =
+    const randomAnswerMode: AllowedAnswerMode =
         getRandomElementInArr(allowedAnswerModes);
 
     const shuffleAnswers = shuffleArray(answers);
