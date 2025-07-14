@@ -93,4 +93,24 @@ const difficulties = [
     { level: 4, name: 'Hardcore' },
 ];
 
-export { allowedGameModes, allowedAnswerModes, questionTypes, difficulties };
+const colorTeam = [
+    '#facc15',
+    '#f97316',
+    '#713f12',
+    '#5eead4',
+    '#14b8a6',
+    '#0ea5e9',
+    '#3b82f6',
+    '#1d4ed8',
+    '#d946ef',
+    '#86198f',
+    '#64748b',
+];
+
+export {
+    allowedGameModes,
+    allowedAnswerModes,
+    questionTypes,
+    difficulties,
+    colorTeam,
+};
