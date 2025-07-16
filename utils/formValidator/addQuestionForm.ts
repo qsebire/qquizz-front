@@ -1,18 +1,18 @@
 import emojiRegex from 'emoji-regex';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-    allowedAnswerModeType,
-    AnswerProps,
-    formDataQuestionType,
-    ThemeProps,
-} from '../../data/dataTypes';
 import { difficulties, questionTypes } from '../../data/shared/quizzModes';
+import {
+    TAllowedAnswerMode,
+    TAnswer,
+    TQuestion,
+    TTheme,
+} from '../../types/question';
 
 export type toggleAnswerModeType = (
-    prevModes: allowedAnswerModeType[],
-    selectedMode: allowedAnswerModeType
-) => { error: boolean; modes: allowedAnswerModeType[] };
+    prevModes: TAllowedAnswerMode[],
+    selectedMode: TAllowedAnswerMode
+) => { error: boolean; modes: TAllowedAnswerMode[] };
 export const toggleAnswerMode: toggleAnswerModeType = (
     prevModes,
     selectedMode
@@ -49,9 +49,9 @@ export const toggleAnswerMode: toggleAnswerModeType = (
 };
 
 export type manageAnswersByModeType = (
-    currentAnswers: AnswerProps[],
-    currentModes: allowedAnswerModeType[]
-) => AnswerProps[];
+    currentAnswers: TAnswer[],
+    currentModes: TAllowedAnswerMode[]
+) => TAnswer[];
 export const manageAnswersByMode: manageAnswersByModeType = (
     currentAnswers,
     currentModes
@@ -87,13 +87,13 @@ export const addQuestionValidation = ({
     formData,
     themes,
 }: {
-    formData: formDataQuestionType;
-    themes: ThemeProps[];
+    formData: TQuestion;
+    themes: TTheme[];
 }) => {
     const {
         question,
         type,
-        themeId,
+        theme,
         difficulty,
         mediaUrl,
         emojis,
@@ -124,12 +124,12 @@ export const addQuestionValidation = ({
     }
 
     // ----- themeId
-    if (!themeId) {
+    if (!theme) {
         resp.isError = true;
         resp.messages.push('Un thème doit être sélectionné.');
     }
 
-    if (!themes.some((allowedTheme) => allowedTheme.id === themeId)) {
+    if (!themes.some((allowedTheme) => allowedTheme.id === theme.id)) {
         resp.isError = true;
         resp.messages.push('Le thème sélectionné est invalide.');
     }

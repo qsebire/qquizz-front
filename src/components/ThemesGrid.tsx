@@ -6,7 +6,7 @@ import Card from './Card';
 import Link from 'next/link';
 import Button from './Button';
 import { Trash } from 'lucide-react';
-import { Theme } from '../../types/question';
+import { TTheme } from '../../types/question';
 
 const getAllThemes = async () => {
     try {
@@ -30,7 +30,7 @@ const getAllThemes = async () => {
 const ThemeCard = ({
     onChange,
     ...theme
-}: Theme & { onChange: () => void }) => {
+}: TTheme & { onChange: () => void }) => {
     const handleDelete = async () => {
         const confirmation = window.confirm(
             `Étes-vous sûr de vouloir supprimer le thème ${theme.name} ?`
@@ -93,7 +93,7 @@ export default function ThemesGrid({
 }: {
     addThemeButton?: boolean;
 }) {
-    const [themes, setThemes] = useState<Theme[]>([]);
+    const [themes, setThemes] = useState<TTheme[]>([]);
     const [displayAll, setDisplayAll] = useState(false);
     const [toggleThemeEdited, setToggleThemeEdited] = useState(false);
     const maxDisplay = 12;

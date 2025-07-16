@@ -9,10 +9,10 @@ import MainContainer from '@/components/MainContainer';
 import Image from 'next/image';
 import { getRandomElementInArr, shuffleArray } from '../../../../utils/hooks';
 import Timer from '../elements/Timer';
-import { AllowedAnswerMode, Question } from '../../../../types/question';
+import { TAllowedAnswerMode, TQuestion } from '../../../../types/question';
 
 export default function RandomQuestion() {
-    const [randomQuestion, setRandomQuestion] = useState<Question>();
+    const [randomQuestion, setRandomQuestion] = useState<TQuestion>();
 
     useEffect(() => {
         const fetchRandomQuestion = async () => {
@@ -49,7 +49,7 @@ export default function RandomQuestion() {
         subTheme,
     } = randomQuestion;
 
-    const randomAnswerMode: AllowedAnswerMode =
+    const randomAnswerMode: TAllowedAnswerMode =
         getRandomElementInArr(allowedAnswerModes);
 
     const shuffleAnswers = shuffleArray(answers);

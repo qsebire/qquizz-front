@@ -20,6 +20,8 @@ const buttonVariants = cva(
                 md: 'py-1.5 px-3 text-base rounded-lg',
                 lg: 'py-2 px-4 text-lg rounded-xl',
                 xl: 'py-3 px-6 text-xl rounded-2xl',
+                '2xl': 'py-4 px-8 text-2xl font-bold rounded-2xl',
+                '3xl': 'py-5 px-10 text-3xl font-bold rounded-3xl',
             },
             isClickable: {
                 true: 'pointer-events-auto shadow-lg shadow-violet-900/40',
@@ -57,6 +59,8 @@ export default function Button({
         md: 18,
         lg: 20,
         xl: 22,
+        '2xl': 24,
+        '3xl': 28,
     };
 
     return (

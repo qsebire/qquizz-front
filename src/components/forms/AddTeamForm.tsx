@@ -1,26 +1,36 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Team } from '../../../types/game';
+import { TTeam } from '../../../types/game';
 import Input from './elements/Input';
 import { colorTeam } from '../../../data/shared/quizzModes';
 import Button from '../Button';
 import { useGameStore } from '../../../stores';
+import {
+    arraysEqual,
+    arrayToHslString,
+    getRandomElementInArr,
+} from '../../../utils/hooks';
+import { THslArray } from '../../../types';
 
 function ColorSelect({
     color: currentColor,
     onSelectColor,
+    allowColors,
 }: {
-    color: string;
-    onSelectColor: (color: string) => void;
+    color: THslArray;
+    onSelectColor: (color: THslArray) => void;
+    allowColors?: THslArray[];
 }) {
     const popoverRef = useRef<HTMLDivElement>(null);
 
+    const colors = allowColors || colorTeam;
+
     const [showColors, setShowColors] = useState(false);
 
-    const handleSelect = (color: string) => {
+    const handleSelect = (color: THslArray) => {
         onSelectColor(color);
         setShowColors(false);
     };
@@ -43,21 +53,21 @@ function ColorSelect({
         >
             <button
                 className='aspect-square w-12 rounded-lg block border border-white cursor-pointer shadow-xl shadow-violet-900/40'
-                style={{ background: currentColor }}
+                style={{ background: arrayToHslString(currentColor) }}
                 onClick={() => setShowColors((prev) => !prev)}
                 type='button'
             />
             {showColors && (
                 <div
                     ref={popoverRef}
-                    className='absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white p-2 z-10 rounded-xl grid grid-cols-4 gap-2 w-max'
+                    className='absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white p-2 z-[999999] rounded-xl grid grid-cols-4 gap-2 w-max'
                 >
-                    {colorTeam.map((color, index) => {
+                    {colors.map((color, index) => {
                         return (
                             <button
                                 key={index}
                                 className='aspect-square w-10 rounded-lg cursor-pointer'
-                                style={{ background: color }}
+                                style={{ background: arrayToHslString(color) }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleSelect(color);
@@ -73,78 +83,81 @@ function ColorSelect({
 }
 
 export default function AddTeamForm() {
-    const { addTeam } = useGameStore();
+    const { addTeam, teams } = useGameStore();
 
     const [error, setError] = useState<{
         isError: boolean;
-        messages: string[];
-    }>({ isError: false, messages: [] });
-    const [team, setTeam] = useState<Team>({
+        message: string;
+    }>({ isError: false, message: '' });
+    const [allowColors, setAllowColors] = useState(colorTeam);
+    const [team, setTeam] = useState<TTeam>({
         id: uuidv4(),
         name: '',
         score: 0,
-        color: colorTeam[0],
+        color: getRandomElementInArr(colorTeam),
     });
 
-    const handleSubmit = () => {
+    useEffect(() => {
+        const checkColors = colorTeam.filter(
+            (color) => !teams.some((team) => arraysEqual(team.color, color))
+        );
+        setAllowColors(checkColors);
+        setTeam({ ...team, color: getRandomElementInArr(checkColors) });
+    }, [teams]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
         if (!team.id) {
-            setError((prev) => {
-                return {
-                    isError: true,
-                    messages: [
-                        ...prev.messages,
-                        'Une erreur est survenue, merci de recharger la page.',
-                    ],
-                };
+            setError({
+                isError: true,
+                message: 'Une erreur est survenue, merci de recharger la page.',
             });
+            return;
         }
 
         if (!team.name) {
-            setError((prev) => {
-                return {
-                    isError: true,
-                    messages: [
-                        ...prev.messages,
-                        "Vous devez renseigner un nom d'équipe.",
-                    ],
-                };
+            setError({
+                isError: true,
+                message: "Vous devez renseigner un nom d'équipe.",
             });
+            return;
         }
 
         if (!team.color) {
-            setError((prev) => {
-                return {
-                    isError: true,
-                    messages: [
-                        ...prev.messages,
-                        'Vous devez sélectionner une couleur.',
-                    ],
-                };
+            setError({
+                isError: true,
+                message: 'Vous devez sélectionner une couleur.',
             });
+            return;
         }
 
         addTeam(team);
+        setTeam({
+            id: uuidv4(),
+            name: '',
+            score: 0,
+            color: allowColors[0],
+        });
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form
+            onSubmit={handleSubmit}
+            className='space-y-4'
+        >
             <div className='flex gap-4 items-end relative'>
                 <Input
                     label="Nom de l'équipe"
                     value={team.name}
                     onChange={(e) =>
-                        setTeam((prev) => {
-                            return { ...prev, name: e.currentTarget.value };
-                        })
+                        setTeam({ ...team, name: e.currentTarget.value })
                     }
                 />
                 <ColorSelect
                     color={team.color}
-                    onSelectColor={(color) =>
-                        setTeam((prev) => {
-                            return { ...prev, color };
-                        })
-                    }
+                    onSelectColor={(color) => setTeam({ ...team, color })}
+                    allowColors={allowColors}
                 />
                 <Button
                     label='Ajouter'
@@ -153,11 +166,9 @@ export default function AddTeamForm() {
                 />
             </div>
             {error.isError && (
-                <div className='bg-pink-700 py-2 px-4 rounded-2xl text-lg font-medium text-white text-center space-y-1'>
-                    {error.messages.map((message, index) => {
-                        return <p key={index}>{message}</p>;
-                    })}
-                </div>
+                <p className='bg-pink-700 py-2 px-4 rounded-2xl text-lg font-medium text-white text-center space-y-1'>
+                    {error.message}
+                </p>
             )}
         </form>
     );

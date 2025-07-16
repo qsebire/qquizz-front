@@ -1,21 +1,31 @@
+import { THslArray } from '.';
 import {
-    AllowedAnswerMode,
-    DifficultyLevel,
-    QuestionTypeValue,
+    TAllowedAnswerMode,
+    TDifficultyLevel,
+    TQuestionTypeValue,
 } from './question';
 
-export interface Team {
+export interface TTeam {
     id: string;
     name: string;
     score: number;
-    color: string;
+    color: THslArray;
 }
 
-export interface GameRules {
+export interface TGameRules {
     maxRounds: number;
     questionPerRound: number;
     timePerQuestion: number;
-    allowedTypes: QuestionTypeValue[];
-    allowedDifficulties: DifficultyLevel[];
-    allowedAnswerModes: AllowedAnswerMode[];
+    allowedTypes: TQuestionTypeValue[];
+    allowedDifficulties: TDifficultyLevel[];
+    allowedAnswerModes: TAllowedAnswerMode[];
 }
+
+export type TGameStep = 'setup' | 'party' | 'result';
+export type TRoundStep =
+    | 'show'
+    | 'randomQuestion'
+    | 'selectTheme'
+    | 'questions'
+    | 'result';
+export type TQuestionStep = 'info' | 'question' | 'answer' | 'points';

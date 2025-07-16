@@ -4,37 +4,37 @@ import {
     questionTypes,
 } from '../data/shared/quizzModes';
 
-export interface Theme {
+export interface TTheme {
     id: number;
     name: string;
     smiley: string;
 }
 
-export interface SubTheme {
+export interface TSubTheme {
     id: number;
     name: string;
 }
 
-export interface Answer {
+export interface TAnswer {
     id: string;
     text: string;
     isCorrect: boolean;
 }
 
-export type QuestionTypeValue = (typeof questionTypes)[number]['value'];
-export type DifficultyLevel = (typeof difficulties)[number]['level'];
-export type AllowedAnswerMode = (typeof allowedAnswerModes)[number]['name'];
+export type TQuestionTypeValue = (typeof questionTypes)[number]['value'];
+export type TDifficultyLevel = (typeof difficulties)[number]['level'];
+export type TAllowedAnswerMode = (typeof allowedAnswerModes)[number]['name'];
 
-export interface Question {
+export interface TQuestion {
     question: string;
-    type: QuestionTypeValue;
+    type: TQuestionTypeValue;
     theme: { id: number; name: string; smiley: string };
     subTheme?: { id?: number; name: string };
-    difficulty: DifficultyLevel;
+    difficulty: TDifficultyLevel;
     mediaUrl?: string;
     emojis?: string;
-    allowedAnswerModes: AllowedAnswerMode[];
-    answers: Answer[];
+    allowedAnswerModes: TAllowedAnswerMode[];
+    answers: TAnswer[];
     answerDetail?: string;
     userId?: string;
 }

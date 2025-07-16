@@ -29,16 +29,16 @@ import {
 } from '../../../utils/formValidator/addQuestionForm';
 import Loader from '../Loader';
 import {
-    AllowedAnswerMode,
-    Question,
-    SubTheme,
-    Theme,
+    TAllowedAnswerMode,
+    TQuestion,
+    TSubTheme,
+    TTheme,
 } from '../../../types/question';
 
 export default function AddQuestionForm() {
     const user = useUser();
 
-    const defaultQuestionData: Question = {
+    const defaultQuestionData: TQuestion = {
         question: '',
         type: 'TEXT',
         theme: { id: 0, name: '', smiley: '' },
@@ -61,11 +61,11 @@ export default function AddQuestionForm() {
     }>({ isError: false, messages: [] });
     const [isValidate, setIsValidate] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [themes, setThemes] = useState<Theme[]>();
-    const [subThemes, setSubThemes] = useState<SubTheme[]>();
+    const [themes, setThemes] = useState<TTheme[]>();
+    const [subThemes, setSubThemes] = useState<TSubTheme[]>();
     const [isNewSubTheme, setIsNewSubTheme] = useState(false);
     const [modesError, setModesError] = useState(false);
-    const [formData, setFormData] = useState<Question>(defaultQuestionData);
+    const [formData, setFormData] = useState<TQuestion>(defaultQuestionData);
 
     useEffect(() => {
         const fetchThemes = async () => {
@@ -284,7 +284,7 @@ export default function AddQuestionForm() {
     };
 
     // Manage modes and repercussions
-    const handleAnswerMode = (name: AllowedAnswerMode) => {
+    const handleAnswerMode = (name: TAllowedAnswerMode) => {
         setFormData((prev) => {
             const respModes = toggleAnswerMode(prev.allowedAnswerModes, name);
             const newAnswers = manageAnswersByMode(

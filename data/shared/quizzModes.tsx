@@ -1,3 +1,5 @@
+import { THslArray } from '../../types';
+
 const allowedGameModes = [
     {
         name: 'SPEED',
@@ -93,18 +95,23 @@ const difficulties = [
     { level: 4, name: 'Hardcore' },
 ];
 
-const colorTeam = [
-    '#facc15',
-    '#f97316',
-    '#713f12',
-    '#5eead4',
-    '#14b8a6',
-    '#0ea5e9',
-    '#3b82f6',
-    '#1d4ed8',
-    '#d946ef',
-    '#86198f',
-    '#64748b',
+const colorTeam: THslArray[] = [
+    [84, 81, 44], // lime
+    [142, 71, 45], // green
+    [160, 84, 39], // emerald
+    [173, 80, 40], // teal
+    [215, 16, 47], // slate
+    [189, 94, 43], // cyan
+    [199, 89, 48], // sky
+    [217, 91, 60], // blue
+    [239, 84, 67], // indigo
+    [333, 71, 51], // fuchsia
+    [330, 81, 60], // pink
+    [350, 89, 60], // rose
+    [0, 84, 60], // red
+    [25, 95, 53], // orange
+    [32, 95, 44], // amber
+    [48, 96, 53], // yellow
 ];
 
 export {
