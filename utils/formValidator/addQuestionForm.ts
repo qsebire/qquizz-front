@@ -2,17 +2,12 @@ import emojiRegex from 'emoji-regex';
 import { v4 as uuidv4 } from 'uuid';
 
 import { difficulties, questionTypes } from '../../data/shared/quizzModes';
-import {
-    TAllowedAnswerMode,
-    TAnswer,
-    TQuestion,
-    TTheme,
-} from '../../types/question';
+import { TAnswerMode, TAnswer, TQuestion, TTheme } from '../../types/question';
 
 export type toggleAnswerModeType = (
-    prevModes: TAllowedAnswerMode[],
-    selectedMode: TAllowedAnswerMode
-) => { error: boolean; modes: TAllowedAnswerMode[] };
+    prevModes: TAnswerMode[],
+    selectedMode: TAnswerMode
+) => { error: boolean; modes: TAnswerMode[] };
 export const toggleAnswerMode: toggleAnswerModeType = (
     prevModes,
     selectedMode
@@ -50,7 +45,7 @@ export const toggleAnswerMode: toggleAnswerModeType = (
 
 export type manageAnswersByModeType = (
     currentAnswers: TAnswer[],
-    currentModes: TAllowedAnswerMode[]
+    currentModes: TAnswerMode[]
 ) => TAnswer[];
 export const manageAnswersByMode: manageAnswersByModeType = (
     currentAnswers,

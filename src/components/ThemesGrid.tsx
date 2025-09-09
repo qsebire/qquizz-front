@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { URL_BACKEND } from '../../data/general';
 import Card from './Card';
 import Link from 'next/link';
 import Button from './Button';
@@ -10,7 +9,9 @@ import { TTheme } from '../../types/question';
 
 const getAllThemes = async () => {
     try {
-        const response = await fetch(`${URL_BACKEND}/theme/all`);
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/theme/all`
+        );
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -39,9 +40,12 @@ const ThemeCard = ({
         if (!confirmation) return;
 
         try {
-            const response = await fetch(`${URL_BACKEND}/theme/${theme.id}`, {
-                method: 'DELETE',
-            });
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/theme/${theme.id}`,
+                {
+                    method: 'DELETE',
+                }
+            );
 
             if (!response.ok) {
                 const errorData = await response.json();

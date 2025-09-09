@@ -1,9 +1,5 @@
 import { THslArray } from '.';
-import {
-    TAllowedAnswerMode,
-    TDifficultyLevel,
-    TQuestionTypeValue,
-} from './question';
+import { TAnswerMode, TDifficultyLevel, TQuestionTypeValue } from './question';
 
 export interface TTeam {
     id: string;
@@ -18,7 +14,7 @@ export interface TGameRules {
     timePerQuestion: number;
     allowedTypes: TQuestionTypeValue[];
     allowedDifficulties: TDifficultyLevel[];
-    allowedAnswerModes: TAllowedAnswerMode[];
+    allowedAnswerModes: TAnswerMode[];
 }
 
 export type TGameStep = 'setup' | 'party' | 'result';

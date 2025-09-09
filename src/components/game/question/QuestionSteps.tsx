@@ -1,15 +1,18 @@
 'use client';
 
 import { useGameStore } from '../../../../stores';
+import { TQuestion } from '../../../../types/question';
+import Question from './Question';
+import QuestionInfos from './QuestionInfos';
 
-export default function RoundSteps() {
-    const { questionStep } = useGameStore();
+export default function QuestionSteps() {
+    const { round } = useGameStore();
 
-    switch (questionStep) {
+    switch (round.questionStep) {
         case 'info':
-        // return <ShowRound roundNbr={currentRound} />;
+            return <QuestionInfos />;
         case 'question':
-        // return <RoundSteps />
+            return <Question />;
         case 'answer':
         // return <Results />
         case 'points':

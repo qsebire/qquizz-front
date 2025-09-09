@@ -8,33 +8,11 @@ import Image from 'next/image';
 import { getRandomElementInArr, shuffleArray } from '../../../../utils/hooks';
 import Timer from '../elements/Timer';
 import { TAnswerMode, TQuestion } from '../../../../types/question';
+import { useGameStore } from '../../../../stores';
 
-export default function RandomQuestion() {
-    const [randomQuestion, setRandomQuestion] = useState<TQuestion>();
-
-    useEffect(() => {
-        const fetchRandomQuestion = async () => {
-            try {
-                const resp = await fetch(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/question/`
-                );
-                const json = await resp.json();
-
-                if (!resp.ok) {
-                    console.log(json?.error || 'Erreur serveur.');
-                    return;
-                }
-
-                setRandomQuestion(json);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchRandomQuestion();
-    }, []);
-
-    if (!randomQuestion) return;
+export default function Question() {
+    const { round } = useGameStore();
+    const { questions, currentQuestion } = round;
 
     const {
         allowedAnswerModes,
@@ -47,7 +25,7 @@ export default function RandomQuestion() {
         emojis,
         mediaUrl,
         subTheme,
-    } = randomQuestion;
+    } = questions[currentQuestion];
 
     const randomAnswerMode: TAnswerMode =
         getRandomElementInArr(allowedAnswerModes);

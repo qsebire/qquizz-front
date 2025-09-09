@@ -7,7 +7,7 @@ import {
     TRoundStep,
     TTeam,
 } from '../types/game';
-import { TQuestion, TTheme } from '../types/question';
+import { TPlayableQuestion, TQuestion, TTheme } from '../types/question';
 
 export interface GameState {
     teams: TTeam[];
@@ -15,14 +15,12 @@ export interface GameState {
     round: {
         nbr: number;
         step: TRoundStep;
-        randomQuestion: TQuestion | undefined;
-        theme: TTheme | undefined;
-        questions: TQuestion[];
+        questions: TPlayableQuestion[];
         currentQuestion: number;
+        questionStep: TQuestionStep;
     };
     askedQuestions: number[];
     gameStep: TGameStep;
-    questionStep: TQuestionStep;
     // Actions
     setTeams: (teams: TTeam[]) => void;
     addTeam: (team: TTeam) => void;
@@ -31,8 +29,9 @@ export interface GameState {
     startGame: () => void;
     nextRound: () => void;
     updateRoundStep: (newStep: TRoundStep) => void;
-    updateRoundRandomQuestion: (question: TQuestion) => void;
+    addRoundQuestion: (question: TPlayableQuestion) => void;
     updateRoundTheme: (theme: TTheme) => void;
+    updateQuestionStep: (newStep: TQuestionStep) => void;
     updateScores: (teams: TTeam[]) => void;
     addAskedQuestion: (questionId: number) => void;
     resetGame: () => void;
@@ -50,10 +49,9 @@ const defaultGameRules: TGameRules = {
 const defaultRound = {
     nbr: 1,
     step: 'show' as TRoundStep,
-    randomQuestion: undefined,
-    theme: undefined,
     questions: [],
-    currentQuestion: 1,
+    currentQuestion: 0,
+    questionStep: 'info' as TQuestionStep,
 };
 
 export const useGameStore = create<GameState>()(
@@ -64,7 +62,6 @@ export const useGameStore = create<GameState>()(
             round: defaultRound,
             askedQuestions: [],
             gameStep: 'setup',
-            questionStep: 'info',
 
             // Actions
             setTeams: (teams) => set({ teams }),
@@ -95,14 +92,22 @@ export const useGameStore = create<GameState>()(
                     round: { ...state.round, step: newStep },
                 })),
 
-            updateRoundRandomQuestion: (question) =>
+            addRoundQuestion: (question) =>
                 set((state) => ({
-                    round: { ...state.round, randomQuestion: question },
+                    round: {
+                        ...state.round,
+                        questions: [...state.round.questions, question],
+                    },
                 })),
 
             updateRoundTheme: (theme) =>
                 set((state) => ({
                     round: { ...state.round, theme: theme },
+                })),
+
+            updateQuestionStep: (newStep) =>
+                set((state) => ({
+                    round: { ...state.round, questionStep: newStep },
                 })),
 
             updateScores: (teams) => set({ teams }),
@@ -129,7 +134,6 @@ export const useGameStore = create<GameState>()(
                 round: state.round,
                 askedQuestions: state.askedQuestions,
                 gameStep: state.gameStep,
-                questionStep: state.questionStep,
             }),
         }
     )

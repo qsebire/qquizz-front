@@ -1,5 +1,6 @@
 import {
-    allowedAnswerModes,
+    answerModes,
+    questionGameModes,
     difficulties,
     questionTypes,
 } from '../data/shared/quizzModes';
@@ -21,9 +22,10 @@ export interface TAnswer {
     isCorrect: boolean;
 }
 
+export type TQuestionGameMode = (typeof questionGameModes)[number]['name'];
 export type TQuestionTypeValue = (typeof questionTypes)[number]['value'];
 export type TDifficultyLevel = (typeof difficulties)[number]['level'];
-export type TAllowedAnswerMode = (typeof allowedAnswerModes)[number]['name'];
+export type TAnswerMode = (typeof answerModes)[number]['name'];
 
 export interface TQuestion {
     question: string;
@@ -33,8 +35,13 @@ export interface TQuestion {
     difficulty: TDifficultyLevel;
     mediaUrl?: string;
     emojis?: string;
-    allowedAnswerModes: TAllowedAnswerMode[];
+    allowedAnswerModes: TAnswerMode[];
     answers: TAnswer[];
     answerDetail?: string;
     userId?: string;
 }
+
+export type TPlayableQuestion = TQuestion & {
+    answerMode: TAnswerMode;
+    questionGameMode: TQuestionGameMode;
+};

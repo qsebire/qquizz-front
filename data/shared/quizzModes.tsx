@@ -1,6 +1,6 @@
 import { THslArray } from '../../types';
 
-const allowedGameModes = [
+const questionGameModes = [
     {
         name: 'SPEED',
         label: 'Rapidité',
@@ -32,20 +32,20 @@ const allowedGameModes = [
             </p>
         ),
     },
-    {
-        name: 'ONE_TEAM',
-        label: 'Une question par équipe',
-        description: (
-            <p>
-                Chaque équipe répond tour par tour à une question. À la fin du
-                temps imparti, l'équipe concernée donne sa réponse. La réponse
-                est alors révélée. Si elle trouve la bonne réponse, elle marque
-                un point. On passe ensuite à l'équipe suivante.
-            </p>
-        ),
-    },
+    // {
+    //     name: 'ONE_TEAM',
+    //     label: 'Une question par équipe',
+    //     description: (
+    //         <p>
+    //             Chaque équipe répond tour par tour à une question. À la fin du
+    //             temps imparti, l'équipe concernée donne sa réponse. La réponse
+    //             est alors révélée. Si elle trouve la bonne réponse, elle marque
+    //             un point. On passe ensuite à l'équipe suivante.
+    //         </p>
+    //     ),
+    // },
 ];
-const allowedAnswerModes = [
+const answerModes = [
     {
         name: 'CASH',
         label: 'Réponse libre',
@@ -115,8 +115,8 @@ const colorTeam: THslArray[] = [
 ];
 
 export {
-    allowedGameModes,
-    allowedAnswerModes,
+    questionGameModes,
+    answerModes,
     questionTypes,
     difficulties,
     colorTeam,

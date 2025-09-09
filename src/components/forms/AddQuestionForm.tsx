@@ -12,11 +12,10 @@ import UploadImage from './elements/UploadImage';
 import AnswersForm from './AnswersForm';
 
 import {
-    allowedAnswerModes,
     difficulties,
     questionTypes,
+    answerModes,
 } from '../../../data/shared/quizzModes';
-import { URL_BACKEND } from '../../../data/general';
 import { cn } from '../../../lib/cn';
 import Checkbox from './elements/Checkbox';
 import InfoButton from '../InfoButton';
@@ -29,7 +28,7 @@ import {
 } from '../../../utils/formValidator/addQuestionForm';
 import Loader from '../Loader';
 import {
-    TAllowedAnswerMode,
+    TAnswerMode,
     TQuestion,
     TSubTheme,
     TTheme,
@@ -70,10 +69,12 @@ export default function AddQuestionForm() {
     useEffect(() => {
         const fetchThemes = async () => {
             try {
-                const respThemes = await fetch(`${URL_BACKEND}/theme/all`);
+                const respThemes = await fetch(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/theme/all`
+                );
                 const themes = await respThemes.json();
                 const respSubThemes = await fetch(
-                    `${URL_BACKEND}/sub-theme/all`
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/sub-theme/all`
                 );
                 const subThemes = await respSubThemes.json();
                 if (!respThemes.ok || !respSubThemes.ok) {
@@ -134,11 +135,14 @@ export default function AddQuestionForm() {
         let subThemeId = subTheme?.id;
         if (subTheme && !subThemeId && subTheme.name.length > 1) {
             try {
-                const resp = await fetch(`${URL_BACKEND}/sub-theme/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: subTheme.name }),
-                });
+                const resp = await fetch(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/sub-theme/`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: subTheme.name }),
+                    }
+                );
                 const json = await resp.json();
 
                 if (!resp.ok) {
@@ -165,15 +169,18 @@ export default function AddQuestionForm() {
 
         try {
             const { theme, subTheme, ...postData } = formData;
-            const resp = await fetch(`${URL_BACKEND}/question/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    themeId: theme.id,
-                    subThemeId,
-                    ...postData,
-                }),
-            });
+            const resp = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/question/`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        themeId: theme.id,
+                        subThemeId,
+                        ...postData,
+                    }),
+                }
+            );
             const json = await resp.json();
             if (!resp.ok) {
                 setError({
@@ -284,7 +291,7 @@ export default function AddQuestionForm() {
     };
 
     // Manage modes and repercussions
-    const handleAnswerMode = (name: TAllowedAnswerMode) => {
+    const handleAnswerMode = (name: TAnswerMode) => {
         setFormData((prev) => {
             const respModes = toggleAnswerMode(prev.allowedAnswerModes, name);
             const newAnswers = manageAnswersByMode(
@@ -308,7 +315,7 @@ export default function AddQuestionForm() {
         });
     };
 
-    const answerModes = allowedAnswerModes.map((allowedAnswerMode) => {
+    const answerModesDisplay = answerModes.map((allowedAnswerMode) => {
         return (
             <div
                 className='flex items-start gap-1'
@@ -468,7 +475,7 @@ export default function AddQuestionForm() {
                         </ul>
                     </div>
                     <div className='flex items-center gap-4 flex-wrap'>
-                        {answerModes}
+                        {answerModesDisplay}
                     </div>
                 </div>
                 <div className='space-y-4 border-y border-white py-4'>

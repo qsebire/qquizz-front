@@ -7,13 +7,13 @@ import { TGameRules } from '../../../types/game';
 import Input from './elements/Input';
 import Select from './elements/Select';
 import {
-    allowedAnswerModes,
+    answerModes,
     difficulties,
     questionTypes,
 } from '../../../data/shared/quizzModes';
 import FieldContainer from './elements/FieldContainer';
 import InfoButton from '../InfoButton';
-import { TAllowedAnswerMode, TDifficultyLevel } from '../../../types/question';
+import { TAnswerMode, TDifficultyLevel } from '../../../types/question';
 
 type CheckbofFieldConfig<T> = {
     items: { value: T; label: string; description?: JSX.Element }[];
@@ -110,13 +110,13 @@ export default function GameRulesForm() {
 
     const answerModesConfig = {
         label: 'Types de réponses',
-        items: allowedAnswerModes.map((ad) => ({
+        items: answerModes.map((ad) => ({
             value: ad.name,
             label: ad.label,
             description: ad.description,
         })),
         currentValues: gameRules.allowedAnswerModes,
-        onUpdate: (newValue: TAllowedAnswerMode[]) =>
+        onUpdate: (newValue: TAnswerMode[]) =>
             setRules({
                 ...gameRules,
                 allowedAnswerModes: newValue,

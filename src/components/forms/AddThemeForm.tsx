@@ -7,8 +7,6 @@ import emojiRegex from 'emoji-regex';
 import Button from '../Button';
 import Input from './elements/Input';
 
-import { URL_BACKEND } from '../../../data/general';
-
 export default function AddThemeForm() {
     const [name, setName] = useState('');
     const [smiley, setSmiley] = useState('🌎');
@@ -49,11 +47,14 @@ export default function AddThemeForm() {
         }
 
         try {
-            const resp = await fetch(`${URL_BACKEND}/theme/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, smiley }),
-            });
+            const resp = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/theme/`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, smiley }),
+                }
+            );
             const json = await resp.json();
             if (!resp.ok) {
                 setError({

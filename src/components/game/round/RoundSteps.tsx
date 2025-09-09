@@ -3,15 +3,18 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '../../../../stores';
 import ShowRound from './ShowRound';
-import { URL_BACKEND } from '../../../../data/general';
-import RandomQuestion from '../question/RandomQuestion';
+import QuestionSteps from '../question/QuestionSteps';
+import { buildQuestionApiUrl } from '../../../../utils/buildQuestionApiUrl';
 
 export default function RoundSteps() {
+    console.log('RoundSteps');
+
     const {
         round,
         askedQuestions,
-        updateRoundRandomQuestion,
+        addRoundQuestion,
         addAskedQuestion,
+        gameRules,
         updateRoundStep,
     } = useGameStore();
 
@@ -21,21 +24,30 @@ export default function RoundSteps() {
     useEffect(() => {
         const fetchRandomQuestion = async () => {
             try {
-                const askedIdsString = askedQuestions.join(',');
-                const resp = await fetch(
-                    `${URL_BACKEND}/question/random${
-                        askedIdsString && `?askedIds=${askedIdsString}`
-                    }`
-                );
+                if (round.questions.length >= 1 || isFetchDone) {
+                    return;
+                }
+
+                const fetchUrl = buildQuestionApiUrl({
+                    askedIds: askedQuestions,
+                    answerModes: ['MCQ'],
+                    difficulties: gameRules.allowedDifficulties,
+                });
+                const resp = await fetch(fetchUrl);
+
                 const randomQuestion = await resp.json();
 
                 if (!resp.ok) {
                     console.log(randomQuestion?.error || 'Erreur serveur.');
                     return;
                 }
-                console.log(randomQuestion);
-                updateRoundRandomQuestion(randomQuestion);
                 setIsFetchDone(true);
+                addRoundQuestion({
+                    ...randomQuestion,
+                    answerMode: 'MCQ',
+                    questionGameMode: 'SPEED',
+                });
+                // addAskedQuestion(randomQuestion.id);
             } catch (error) {
                 console.log(error);
             }
@@ -62,14 +74,12 @@ export default function RoundSteps() {
     }, [isFetchDone, isDelayDone]);
 
     console.log(round);
-    console.log(isFetchDone);
-    console.log(isDelayDone);
 
     switch (round.step) {
         case 'show':
             return <ShowRound roundNbr={round.nbr} />;
         case 'randomQuestion':
-            return <RandomQuestion />;
+            return <QuestionSteps />;
         case 'selectTheme':
         // return <Results />
         case 'questions':
