@@ -13,8 +13,9 @@ import InfoButton from '@/components/InfoButton';
 import Button from '@/components/Button';
 
 export default function QuestionInfos() {
-    const { round, updateQuestionStep } = useGameStore();
+    const { round, gameRules, updateQuestionStep } = useGameStore();
     const { currentQuestion, nbr, questions } = round;
+    const { questionPerRound } = gameRules;
     const isThemeSelectionQuestion = currentQuestion === 0;
     const { answerMode, questionGameMode, theme, subTheme } =
         questions[currentQuestion];
@@ -27,37 +28,52 @@ export default function QuestionInfos() {
     return (
         <MainContainer className='flex flex-col gap-10 items-center justify-between py-6 relative overflow-visible'>
             <Tag
-                label={`Tour n°${nbr}`}
-                variant='green'
+                label={
+                    isThemeSelectionQuestion
+                        ? 'Qui choisi le thème ?'
+                        : `Question ${currentQuestion}/${questionPerRound}`
+                }
                 size='xl'
+                className='absolute -top-7'
             />
-            <div className='space-y-8'>
-                <Title>
-                    {isThemeSelectionQuestion
-                        ? 'Question pour le choix du thème'
-                        : `Question n°${currentQuestion}`}
-                </Title>
+            <div />
+            <div className='space-y-10'>
+                <div className='space-y-6'>
+                    <p className='text-4xl font-bold text-teal-300 text-center'>
+                        {theme.name}
+                        {subTheme && ' - ' + subTheme.name}
+                    </p>
+                    <Title>
+                        {isThemeSelectionQuestion
+                            ? 'Question pour le choix du thème'
+                            : `Question n°${currentQuestion}`}
+                    </Title>
+                </div>
                 <div className='flex justify-center items-center gap-4'>
                     {questionGameModeObj && (
-                        <div className='flex items-start'>
+                        <div className='relative'>
                             <Tag
                                 label={questionGameModeObj.label}
                                 variant='outline'
-                                size='2xl'
+                                size='xl'
                             />
-                            <InfoButton
-                                info={questionGameModeObj.description}
-                            />
+                            <div className='absolute top-0 -right-2'>
+                                <InfoButton
+                                    info={questionGameModeObj.description}
+                                />
+                            </div>
                         </div>
                     )}
                     {answerModeObj && (
-                        <div className='flex items-start'>
+                        <div className='relative'>
                             <Tag
                                 label={answerModeObj.label}
                                 variant='outline'
-                                size='2xl'
+                                size='xl'
                             />
-                            <InfoButton info={answerModeObj.description} />
+                            <div className='absolute top-0 -right-2'>
+                                <InfoButton info={answerModeObj.description} />
+                            </div>
                         </div>
                     )}
                 </div>
@@ -65,6 +81,7 @@ export default function QuestionInfos() {
             <Button
                 label='Passer à la question'
                 onClick={() => updateQuestionStep('question')}
+                size='2xl'
             />
         </MainContainer>
     );

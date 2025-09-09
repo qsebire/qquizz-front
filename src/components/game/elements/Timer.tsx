@@ -29,8 +29,8 @@ export default function Timer({
     return (
         <div
             className={cn(
-                'aspect-square w-20 rounded-full border-5 border-white flex justify-center items-center absolute -top-11 left-1/2 -translate-x-1/2 z-10 shadow-2xl shadow-violet-900 overflow-hidden',
-                time > 10 ? 'bg-teal-500' : 'bg-pink-500',
+                'aspect-square w-20 rounded-full border-5 border-white flex justify-center items-center relative shadow-2xl shadow-violet-900 overflow-hidden',
+                time > 10 ? 'bg-teal-400' : 'bg-pink-500',
                 className
             )}
         >
@@ -41,7 +41,7 @@ export default function Timer({
                 <div
                     className={cn(
                         'aspect-square w-18 rounded-full ',
-                        time > 10 ? 'bg-teal-950' : 'bg-pink-950'
+                        time > 10 ? 'bg-teal-900' : 'bg-pink-900'
                     )}
                 />
             </div>

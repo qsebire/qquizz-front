@@ -11,6 +11,7 @@ const buttonVariants = cva(
                 default:
                     'bg-white text-violet-700 hover:bg-violet-900 hover:text-white',
                 violet: 'bg-violet-700 text-white hover:bg-violet-900 hover:text-white',
+                green: 'bg-teal-400 text-teal-900 hover:bg-teal-800 hover:text-teal-200',
                 dark: 'bg-violet-950 text-white hover:bg-violet-800 hover:text-white',
                 outline:
                     'bg-transparent border border-white text-white hover:bg-white hover:text-violet-700',

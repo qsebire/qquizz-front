@@ -1,8 +1,9 @@
 'use client';
 
 import { useGameStore } from '../../../../stores';
-import { TQuestion } from '../../../../types/question';
+import QuestionWaitingAnswer from './QuestinWaitingAnswer';
 import Question from './Question';
+import QuestionAnswer from './QuestionAnswer';
 import QuestionInfos from './QuestionInfos';
 
 export default function QuestionSteps() {
@@ -13,8 +14,10 @@ export default function QuestionSteps() {
             return <QuestionInfos />;
         case 'question':
             return <Question />;
+        case 'waitingAnswer':
+            return <QuestionWaitingAnswer />;
         case 'answer':
-        // return <Results />
+            return <QuestionAnswer />;
         case 'points':
         // return <Results />
     }

@@ -24,4 +24,9 @@ export type TRoundStep =
     | 'selectTheme'
     | 'questions'
     | 'result';
-export type TQuestionStep = 'info' | 'question' | 'answer' | 'points';
+export type TQuestionStep =
+    | 'info'
+    | 'question'
+    | 'waitingAnswer'
+    | 'answer'
+    | 'points';

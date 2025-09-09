@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '../../../../stores';
 import ShowRound from './ShowRound';
 import QuestionSteps from '../question/QuestionSteps';
 import { buildQuestionApiUrl } from '../../../../utils/buildQuestionApiUrl';
 
 export default function RoundSteps() {
-    console.log('RoundSteps');
-
     const {
         round,
         askedQuestions,
@@ -21,13 +19,13 @@ export default function RoundSteps() {
     const [isFetchDone, setIsFetchDone] = useState(false);
     const [isDelayDone, setDelayDone] = useState(false);
 
+    // --- Avoid two fetch on mount
+    const renderAfterCalled = useRef(false);
+
+    // --- Fetch first random question
     useEffect(() => {
         const fetchRandomQuestion = async () => {
             try {
-                if (round.questions.length >= 1 || isFetchDone) {
-                    return;
-                }
-
                 const fetchUrl = buildQuestionApiUrl({
                     askedIds: askedQuestions,
                     answerModes: ['MCQ'],
@@ -53,9 +51,14 @@ export default function RoundSteps() {
             }
         };
 
-        fetchRandomQuestion();
+        if (!renderAfterCalled.current) {
+            fetchRandomQuestion();
+        }
+
+        renderAfterCalled.current = true;
     }, []);
 
+    // --- Wait delay befor change display
     useEffect(() => {
         const goToRandomQuestionStep = setTimeout(
             () => setDelayDone(true),
@@ -67,6 +70,7 @@ export default function RoundSteps() {
         };
     }, []);
 
+    // --- If fetch and delay ok, change the display
     useEffect(() => {
         if (isFetchDone && isDelayDone) {
             updateRoundStep('randomQuestion');

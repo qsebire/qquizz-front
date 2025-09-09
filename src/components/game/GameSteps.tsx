@@ -6,7 +6,6 @@ import GameSetup from './GameSetup';
 import RoundSteps from './round/RoundSteps';
 
 export default function GameSteps() {
-    console.log('GameSteps');
     const { gameStep } = useGameStore();
     const isHydrated = useHydrated();
 
