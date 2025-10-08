@@ -17,16 +17,6 @@ export interface TGameRules {
     allowedAnswerModes: TAnswerMode[];
 }
 
-export type TGameStep = 'setup' | 'party' | 'result';
-export type TRoundStep =
-    | 'show'
-    | 'randomQuestion'
-    | 'selectTheme'
-    | 'questions'
-    | 'result';
-export type TQuestionStep =
-    | 'info'
-    | 'question'
-    | 'waitingAnswer'
-    | 'answer'
-    | 'points';
+export type TGameStep = 'setup' | 'shuffleTeams' | 'party' | 'result';
+export type TRoundStep = 'selectTeam' | 'selectTheme' | 'questions' | 'result';
+export type TQuestionStep = 'info' | 'question' | 'waitingAnswer' | 'answer';

@@ -55,3 +55,13 @@
         height: 100%;
     }
 }
+
+.infinite-scroll {
+    animation: scroll 4s linear 1s infinite;
+}
+
+@keyframes scroll {
+    100% {
+        top: 0px;
+    } /* top is the number of spans (in this case 8) multiplied by span height (45px as described above)*/
+}

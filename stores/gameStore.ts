@@ -20,6 +20,8 @@ export interface GameState {
         questionStep: TQuestionStep;
     };
     askedQuestions: number[];
+    chosenThemes: number[];
+    chosenSubThemes: number[];
     gameStep: TGameStep;
     // Actions
     setTeams: (teams: TTeam[]) => void;
@@ -48,7 +50,7 @@ const defaultGameRules: TGameRules = {
 
 const defaultRound = {
     nbr: 1,
-    step: 'show' as TRoundStep,
+    step: 'selectTeam' as TRoundStep,
     questions: [],
     currentQuestion: 0,
     questionStep: 'info' as TQuestionStep,
@@ -61,6 +63,8 @@ export const useGameStore = create<GameState>()(
             gameRules: defaultGameRules,
             round: defaultRound,
             askedQuestions: [],
+            chosenThemes: [],
+            chosenSubThemes: [],
             gameStep: 'setup',
 
             // Actions
@@ -78,7 +82,7 @@ export const useGameStore = create<GameState>()(
 
             setRules: (gameRules) => set({ gameRules }),
 
-            startGame: () => set({ gameStep: 'party' }),
+            startGame: () => set({ gameStep: 'shuffleTeams' }),
 
             showResults: () => set({ gameStep: 'result' }),
 
@@ -133,6 +137,8 @@ export const useGameStore = create<GameState>()(
                 gameRules: state.gameRules,
                 round: state.round,
                 askedQuestions: state.askedQuestions,
+                chosenTheme: state.chosenThemes,
+                chosenSubTheme: state.chosenSubThemes,
                 gameStep: state.gameStep,
             }),
         }

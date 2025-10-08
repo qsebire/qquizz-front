@@ -18,7 +18,5 @@ export default function QuestionSteps() {
             return <QuestionWaitingAnswer />;
         case 'answer':
             return <QuestionAnswer />;
-        case 'points':
-        // return <Results />
     }
 }
